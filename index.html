@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Cute Piano ♫ 可愛小鋼琴</title>
+  <style>
+    :root {
+      --bg-color: #FFF6F6;
+      --card-bg: #FFFFFF;
+      --primary-pink: #FF8FA3;
+      --primary-hover: #FF758F;
+      --accent-yellow: #FFE3A8;
+      --accent-purple: #C8B6FF;
+      --text-main: #5C4D4D;
+      --text-sub: #A39696;
+      --white-key-bg: #FFFFFF;
+      --white-key-active: #FFE5EC;
+      --black-key-bg: #4A3E3D;
+      --black-key-active: #FF758F;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at top left, #FFE5EC, var(--bg-color));
+      font-family: 'Comic Sans MS', 'Quicksand', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 10px;
+      overflow-x: hidden;
+    }
+
+    .piano-station {
+      background: var(--card-bg);
+      border-radius: 36px;
+      box-shadow: 0 20px 45px rgba(255, 143, 163, 0.2), 0 5px 15px rgba(0, 0, 0, 0.03);
+      padding: 24px 30px;
+      max-width: 1060px;
+      width: 100%;
+      border: 4px solid #FFF0F3;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* 頂部資訊列 */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary-pink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title span {
+      background: #FFE3A8;
+      color: #795548;
+      font-size: 0.8rem;
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-weight: bold;
+    }
+
+    /* 控制面板按鈕群組 */
+    .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      background: #FFF9FA;
+      padding: 12px 18px;
+      border-radius: 20px;
+      border: 2px dashed #FFD6DE;
+    }
+
+    button {
+      outline: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 14px;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+    }
+
+    button:active {
+      transform: translateY(2px) scale(0.97);
+    }
+
+    .btn-record {
+      background: #FFE5EC;
+      color: #D90429;
+    }
+    .btn-record.recording {
+      background: #EF233C;
+      color: #FFF;
+      animation: pulse 1s infinite alternate;
+    }
+    .btn-play {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+    .btn-play:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-sustain {
+      background: #F3E8FF;
+      color: #6B21A8;
+    }
+    .btn-sustain.active {
+      background: #9333EA;
+      color: #FFF;
+      box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+    }
+
+    .btn-guide {
+      background: #E0F2FE;
+      color: #0369A1;
+      margin-left: auto;
+    }
+
+    .song-select {
+      appearance: none;
+      background: #FFF border-box;
+      border: 2px solid #FFD6DE;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 8px 14px;
+      border-radius: 14px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
+
+    /* 琴鍵區域 */
+    .keyboard-wrapper {
+      position: relative;
+      background: #3B2F2F;
+      padding: 12px 14px 16px;
+      border-radius: 22px;
+      box-shadow: inset 0 6px 12px rgba(0,0,0,0.4);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .keyboard {
+      position: relative;
+      display: flex;
+      width: max-content;
+      margin: 0 auto;
+      height: 250px;
+    }
+
+    /* 白鍵 */
+    .white-key {
+      position: relative;
+      width: 58px;
+      height: 100%;
+      background: var(--white-key-bg);
+      border-radius: 0 0 12px 12px;
+      margin-right: 3px;
+      border: 1px solid #E5DADA;
+      border-top: none;
+      box-shadow: 0 6px 0 #D3C3C3, 0 8px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 12px;
+      cursor: pointer;
+      transition: background 0.08s, transform 0.08s, box-shadow 0.08s;
+      z-index: 1;
+    }
+
+    .white-key.active {
+      background: var(--white-key-active);
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #D3C3C3, 0 3px 6px rgba(255, 143, 163, 0.4);
+    }
+
+    /* 黑鍵 */
+    .black-key {
+      position: absolute;
+      width: 36px;
+      height: 155px;
+      background: linear-gradient(180deg, #2E2727, var(--black-key-bg));
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 0 #1A1414, 0 6px 10px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 8px;
+      transition: background 0.08s, transform 0.08s, box-shadow 0.08s;
+    }
+
+    .black-key.active {
+      background: var(--black-key-active);
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #1A1414, 0 2px 5px rgba(255, 117, 143, 0.5);
+    }
+
+    /* 唱名與熱鍵字樣 */
+    .key-solfege {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      pointer-events: none;
+    }
+    .black-key .key-solfege {
+      color: #FFE5EC;
+      font-size: 0.7rem;
+    }
+
+    .key-shortcut {
+      font-size: 0.65rem;
+      color: var(--text-sub);
+      background: #F5EBEB;
+      padding: 2px 5px;
+      border-radius: 6px;
+      margin-top: 4px;
+      font-weight: bold;
+      pointer-events: none;
+    }
+    .black-key .key-shortcut {
+      background: #685858;
+      color: #FFF;
+    }
+
+    /* 彈窗：按鍵對照表 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(80, 60, 60, 0.45);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-card {
+      background: #FFF;
+      border-radius: 28px;
+      padding: 26px 24px;
+      max-width: 580px;
+      width: 100%;
+      border: 3px solid #FFE5EC;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.15);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .modal-header h3 {
+      font-size: 1.25rem;
+      color: var(--primary-pink);
+    }
+    .close-btn {
+      background: #F0F0F0;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .guide-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.85rem;
+    }
+    .guide-table th, .guide-table td {
+      border: 1px solid #FFE5EC;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .guide-table th {
+      background: #FFF0F3;
+      color: var(--text-main);
+    }
+    .key-badge {
+      display: inline-block;
+      background: #FFF;
+      border: 1px solid #CCD;
+      box-shadow: 0 2px 0 #CCD;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="piano-station">
+    <header>
+      <div class="brand-title">
+        ✿ 甜心小鋼琴 <span>25 鍵柔和版</span>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-sub);">
+        支援觸控、滑鼠滑動與電腦鍵盤彈奏
+      </div>
+    </header>
+
+    <!-- 控制面板 -->
+    <div class="dashboard">
+      <button id="recordBtn" class="btn-record">● 開始錄音</button>
+      <button id="playBtn" class="btn-play" disabled>▶ 回放錄音</button>
+      
+      <button id="sustainBtn" class="btn-sustain">
+        延音踏板: <span id="sustainState">關閉</span>
+      </button>
+
+      <div style="display: flex; align-items: center; gap: 6px; margin-left: 8px;">
+        <span style="font-size: 0.85rem; font-weight: bold;">示範曲:</span>
+        <select id="songSelect" class="song-select">
+          <option value="">選擇示範歌曲...</option>
+          <option value="star">小星星 (Twinkle Star)</option>
+          <option value="elise">給愛麗絲 (Für Elise)</option>
+        </select>
+      </div>
+
+      <button id="guideBtn" class="btn-guide">⌨ 鍵盤對照表</button>
+    </div>
+
+    <!-- 琴鍵容器 -->
+    <div class="keyboard-wrapper">
+      <div class="keyboard" id="keyboard"></div>
+    </div>
+  </div>
+
+  <!-- 按鍵對照說明 Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>⌨ 電腦按鍵對照指南</h3>
+        <div class="close-btn" id="closeModal">✕</div>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 12px;">
+        鍵盤分為低八度（中下排按鍵）與高八度（中上排按鍵），按住 <span class="key-badge">Space 空白鍵</span> 可即時觸發延音踏板！
+      </p>
+      
+      <table class="guide-table">
+        <thead>
+          <tr>
+            <th>八度</th>
+            <th>白鍵 (唱名 : 按鍵)</th>
+            <th>黑鍵 (唱名 : 按鍵)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight: bold; color: var(--primary-pink);">低音組 (C4~B4)</td>
+            <td>
+              Do: <span class="key-badge">Tab</span>, Re: <span class="key-badge">Q</span>, Mi: <span class="key-badge">W</span>, Fa: <span class="key-badge">E</span>,<br>
+              Sol: <span class="key-badge">R</span>, La: <span class="key-badge">T</span>, Si: <span class="key-badge">Y</span>
+            </td>
+            <td>
+              Di: <span class="key-badge">1</span>, Ri: <span class="key-badge">2</span>,<br>
+              Fi: <span class="key-badge">4</span>, Si: <span class="key-badge">5</span>, Li: <span class="key-badge">6</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; color: #9333EA;">高音組 (C5~C6)</td>
+            <td>
+              Do↑: <span class="key-badge">U</span>, Re↑: <span class="key-badge">I</span>, Mi↑: <span class="key-badge">O</span>, Fa↑: <span class="key-badge">P</span>,<br>
+              Sol↑: <span class="key-badge">[</span>, La↑: <span class="key-badge">]</span>, Si↑: <span class="key-badge">\</span>, Do↑↑: <span class="key-badge">Z</span>
+            </td>
+            <td>
+              Di↑: <span class="key-badge">8</span>, Ri↑: <span class="key-badge">9</span>,<br>
+              Fi↑: <span class="key-badge">-</span>, Si↑: <span class="key-badge">=</span>, Li↑: <span class="key-badge">Backspace</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       1. 琴鍵規格設定（2 個八度，C4 ～ C6，共 25 鍵）
+    ========================================================= */
+    const KEYS_DATA = [
+      // 低八度 C4 ~ B4
+      { note: 'C4',  freq: 261.63, type: 'white', solfege: 'Do',   key: 'Tab' },
+      { note: 'C#4', freq: 277.18, type: 'black', solfege: 'Di',   key: '1' },
+      { note: 'D4',  freq: 293.66, type: 'white', solfege: 'Re',   key: 'Q' },
+      { note: 'D#4', freq: 311.13, type: 'black', solfege: 'Ri',   key: '2' },
+      { note: 'E4',  freq: 329.63, type: 'white', solfege: 'Mi',   key: 'W' },
+      { note: 'F4',  freq: 349.23, type: 'white', solfege: 'Fa',   key: 'E' },
+      { note: 'F#4', freq: 369.99, type: 'black', solfege: 'Fi',   key: '4' },
+      { note: 'G4',  freq: 392.00, type: 'white', solfege: 'Sol',  key: 'R' },
+      { note: 'G#4', freq: 415.30, type: 'black', solfege: 'Si',   key: '5' },
+      { note: 'A4',  freq: 440.00, type: 'white', solfege: 'La',   key: 'T' },
+      { note: 'A#4', freq: 466.16, type: 'black', solfege: 'Li',   key: '6' },
+      { note: 'B4',  freq: 493.88, type: 'white', solfege: 'Si',   key: 'Y' },
+
+      // 高八度 C5 ~ B5
+      { note: 'C5',  freq: 523.25, type: 'white', solfege: 'Do↑',  key: 'U' },
+      { note: 'C#5', freq: 554.37, type: 'black', solfege: 'Di↑',  key: '8' },
+      { note: 'D5',  freq: 587.33, type: 'white', solfege: 'Re↑',  key: 'I' },
+      { note: 'D#5', freq: 622.25, type: 'black', solfege: 'Ri↑',  key: '9' },
+      { note: 'E5',  freq: 659.25, type: 'white', solfege: 'Mi↑',  key: 'O' },
+      { note: 'F5',  freq: 698.46, type: 'white', solfege: 'Fa↑',  key: 'P' },
+      { note: 'F#5', freq: 739.99, type: 'black', solfege: 'Fi↑',  key: '-' },
+      { note: 'G5',  freq: 783.99, type: 'white', solfege: 'Sol↑', key: '[' },
+      { note: 'G#5', freq: 830.61, type: 'black', solfege: 'Si↑',  key: '=' },
+      { note: 'A5',  freq: 880.00, type: 'white', solfege: 'La↑',  key: ']' },
+      { note: 'A#5', freq: 932.33, type: 'black', solfege: 'Li↑',  key: 'Backspace' },
+      { note: 'B5',  freq: 987.77, type: 'white', solfege: 'Si↑',  key: '\\' },
+
+      // 最高結尾 C6
+      { note: 'C6',  freq: 1046.50, type: 'white', solfege: 'Do↑↑', key: 'Z' }
+    ];
+
+    /* =========================================================
+       2. Web Audio API 合成音色（乾淨柔和調性）
+    ========================================================= */
+    let audioCtx = null;
+    let sustainEnabled = false;
+    const activeOscillators = {}; // 追蹤正在發聲的琴鍵
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // 發聲邏輯：雙震盪器混音（正弦波 + 三角波），溫和不刺耳
+    function startSound(note, freq) {
+      const ctx = getAudioContext();
+      if (activeOscillators[note]) {
+        stopSound(note, true);
+      }
+
+      // 產生主要正弦波 (溫潤基音)
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(freq, ctx.currentTime);
+
+      // 產生次要三角波 (增添微弱琴弦泛音)
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(freq, ctx.currentTime);
+
+      // 增益節點與包絡線 (Envelope)
+      const gainNode = ctx.createGain();
+      const now = ctx.currentTime;
+      gainNode.gain.setValueAtTime(0, now);
+      // 快速平滑起音 (Attack)
+      gainNode.gain.linearRampToValueAtTime(0.35, now + 0.02);
+      // 自然衰減至琴鍵持續音 (Decay -> Sustain)
+      gainNode.gain.exponentialRampToValueAtTime(0.18, now + 0.3);
+
+      osc1.connect(gainNode);
+      osc2.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      osc1.start();
+      osc2.start();
+
+      activeOscillators[note] = { osc1, osc2, gainNode };
+    }
+
+    // 釋放聲音邏輯 (Release)
+    function stopSound(note, immediate = false) {
+      if (!activeOscillators[note]) return;
+      const ctx = getAudioContext();
+      const { osc1, osc2, gainNode } = activeOscillators[note];
+      const now = ctx.currentTime;
+
+      // 根據是否開啟延音踏板決定釋音長度
+      const releaseTime = immediate ? 0.05 : (sustainEnabled ? 1.6 : 0.25);
+
+      gainNode.gain.cancelScheduledValues(now);
+      gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, now + releaseTime);
+
+      setTimeout(() => {
+        try {
+          osc1.stop();
+          osc2.stop();
+          osc1.disconnect();
+          osc2.disconnect();
+          gainNode.disconnect();
+        } catch (e) {}
+      }, releaseTime * 1000 + 50);
+
+      delete activeOscillators[note];
+    }
+
+    /* =========================================================
+       3. 動態渲染琴鍵介面
+    ========================================================= */
+    const keyboardEl = document.getElementById('keyboard');
+    const keyElements = {};
+    const keyMap = {}; // 快速鍵對照表
+
+    let whiteKeyCount = 0;
+    const WHITE_KEY_WIDTH = 58;
+    const WHITE_KEY_GAP = 3;
+
+    KEYS_DATA.forEach((item) => {
+      keyMap[item.key.toLowerCase()] = item.note;
+
+      const keyDiv = document.createElement('div');
+      keyDiv.dataset.note = item.note;
+      keyDiv.classList.add(item.type === 'white' ? 'white-key' : 'black-key');
+
+      let shortcutDisplay = item.key;
+      if (shortcutDisplay === ' ') shortcutDisplay = 'Space';
+      if (shortcutDisplay === 'Backspace') shortcutDisplay = '⌫';
+
+      keyDiv.innerHTML = `
+        <span class="key-solfege">${item.solfege}</span>
+        <span class="key-shortcut">${shortcutDisplay}</span>
+      `;
+
+      if (item.type === 'white') {
+        whiteKeyCount++;
+      } else {
+        // 精確計算黑鍵的橫向重疊位置
+        const leftOffset = whiteKeyCount * (WHITE_KEY_WIDTH + WHITE_KEY_GAP) - (WHITE_KEY_GAP + 18);
+        keyDiv.style.left = `${leftOffset}px`;
+      }
+
+      keyboardEl.appendChild(keyDiv);
+      keyElements[item.note] = keyDiv;
+    });
+
+    /* =========================================================
+       4. 互動事件處理（滑鼠、觸控滑動、電腦按鍵）
+    ========================================================= */
+    let isMouseDown = false;
+    const pressedKeys = new Set();
+
+    function pressKey(note) {
+      if (pressedKeys.has(note)) return;
+      pressedKeys.add(note);
+
+      const target = KEYS_DATA.find(k => k.note === note);
+      if (target) {
+        startSound(target.note, target.freq);
+        if (keyElements[note]) keyElements[note].classList.add('active');
+        recordNoteEvent(note, 'start');
+      }
+    }
+
+    function releaseKey(note) {
+      if (!pressedKeys.has(note)) return;
+      pressedKeys.delete(note);
+
+      stopSound(note);
+      if (keyElements[note]) keyElements[note].classList.remove('active');
+      recordNoteEvent(note, 'stop');
+    }
+
+    // 滑鼠事件
+    window.addEventListener('mousedown', (e) => {
+      isMouseDown = true;
+      const key = e.target.closest('[data-note]');
+      if (key) pressKey(key.dataset.note);
+    });
+
+    window.addEventListener('mouseup', () => {
+      isMouseDown = false;
+      pressedKeys.forEach(n => releaseKey(n));
+    });
+
+    keyboardEl.addEventListener('mouseover', (e) => {
+      if (!isMouseDown) return;
+      const key = e.target.closest('[data-note]');
+      if (key) pressKey(key.dataset.note);
+    });
+
+    keyboardEl.addEventListener('mouseout', (e) => {
+      if (!isMouseDown) return;
+      const key = e.target.closest('[data-note]');
+      if (key) releaseKey(key.dataset.note);
+    });
+
+    // 觸控連續滑音 (Glissando)
+    keyboardEl.addEventListener('touchstart', handleTouch, { passive: false });
+    keyboardEl.addEventListener('touchmove', handleTouch, { passive: false });
+    keyboardEl.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      pressedKeys.forEach(n => releaseKey(n));
+    }, { passive: false });
+
+    function handleTouch(e) {
+      e.preventDefault();
+      const currentNotes = new Set();
+      for (let i = 0; i < e.touches.length; i++) {
+        const touch = e.touches[i];
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        const key = el ? el.closest('[data-note]') : null;
+        if (key) currentNotes.add(key.dataset.note);
+      }
+      // 停止不再觸控的按鍵
+      pressedKeys.forEach(n => {
+        if (!currentNotes.has(n)) releaseKey(n);
+      });
+      // 觸發新增的按鍵
+      currentNotes.forEach(n => pressKey(n));
+    }
+
+    // 電腦實體鍵盤監聽
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'SELECT') return;
+
+      // Tab 與 Alt 鍵防跳焦
+      if (e.key === 'Tab') e.preventDefault();
+
+      // 空白鍵控制暫態延音踏板
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setSustain(true);
+        return;
+      }
+
+      const note = keyMap[e.key.toLowerCase()];
+      if (note) {
+        pressKey(note);
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'Space') {
+        setSustain(false);
+        return;
+      }
+      const note = keyMap[e.key.toLowerCase()];
+      if (note) {
+        releaseKey(note);
+      }
+    });
+
+    /* =========================================================
+       5. 延音踏板切換
+    ========================================================= */
+    const sustainBtn = document.getElementById('sustainBtn');
+    const sustainStateText = document.getElementById('sustainState');
+
+    function setSustain(state) {
+      sustainEnabled = state;
+      sustainStateText.innerText = sustainEnabled ? '開啟' : '關閉';
+      sustainBtn.classList.toggle('active', sustainEnabled);
+    }
+
+    sustainBtn.addEventListener('click', () => {
+      setSustain(!sustainEnabled);
+    });
+
+    /* =========================================================
+       6. 記憶體錄音與回放功能
+    ========================================================= */
+    const recordBtn = document.getElementById('recordBtn');
+    const playBtn = document.getElementById('playBtn');
+
+    let isRecording = false;
+    let isPlayingBack = false;
+    let recordedEvents = [];
+    let recordStartTime = 0;
+
+    function recordNoteEvent(note, type) {
+      if (!isRecording) return;
+      recordedEvents.push({
+        note,
+        type,
+        time: Date.now() - recordStartTime
+      });
+    }
+
+    recordBtn.addEventListener('click', () => {
+      if (isPlayingBack) return;
+
+      if (!isRecording) {
+        // 開始錄音
+        isRecording = true;
+        recordedEvents = [];
+        recordStartTime = Date.now();
+        recordBtn.innerText = '■ 停止錄音';
+        recordBtn.classList.add('recording');
+        playBtn.disabled = true;
+      } else {
+        // 停止錄音
+        isRecording = false;
+        recordBtn.innerText = '● 開始錄音';
+        recordBtn.classList.remove('recording');
+        if (recordedEvents.length > 0) {
+          playBtn.disabled = false;
+        }
+      }
+    });
+
+    playBtn.addEventListener('click', () => {
+      if (isRecording || isPlayingBack || recordedEvents.length === 0) return;
+      playSequence(recordedEvents);
+    });
+
+    function playSequence(events, onComplete) {
+      isPlayingBack = true;
+      playBtn.disabled = true;
+      recordBtn.disabled = true;
+
+      events.forEach((evt) => {
+        setTimeout(() => {
+          if (evt.type === 'start') {
+            pressKey(evt.note);
+          } else {
+            releaseKey(evt.note);
+          }
+        }, evt.time);
+      });
+
+      const totalDuration = events[events.length - 1].time + 500;
+      setTimeout(() => {
+        isPlayingBack = false;
+        playBtn.disabled = recordedEvents.length === 0;
+        recordBtn.disabled = false;
+        if (onComplete) onComplete();
+      }, totalDuration);
+    }
+
+    /* =========================================================
+       7. 內建示範曲庫（小星星、給愛麗絲）
+    ========================================================= */
+    const songSelect = document.getElementById('songSelect');
+
+    const SONGS = {
+      star: [
+        // 小星星：1 1 5 5 6 6 5 - 4 4 3 3 2 2 1
+        { note: 'C4', dur: 400, gap: 100 }, { note: 'C4', dur: 400, gap: 100 },
+        { note: 'G4', dur: 400, gap: 100 }, { note: 'G4', dur: 400, gap: 100 },
+        { note: 'A4', dur: 400, gap: 100 }, { note: 'A4', dur: 400, gap: 100 },
+        { note: 'G4', dur: 800, gap: 200 },
+        { note: 'F4', dur: 400, gap: 100 }, { note: 'F4', dur: 400, gap: 100 },
+        { note: 'E4', dur: 400, gap: 100 }, { note: 'E4', dur: 400, gap: 100 },
+        { note: 'D4', dur: 400, gap: 100 }, { note: 'D4', dur: 400, gap: 100 },
+        { note: 'C4', dur: 800, gap: 200 }
+      ],
+      elise: [
+        // 給愛麗絲經典開頭旋律
+        { note: 'E5', dur: 200, gap: 60 }, { note: 'D#5', dur: 200, gap: 60 },
+        { note: 'E5', dur: 200, gap: 60 }, { note: 'D#5', dur: 200, gap: 60 },
+        { note: 'E5', dur: 200, gap: 60 }, { note: 'B4', dur: 200, gap: 60 },
+        { note: 'D5', dur: 200, gap: 60 }, { note: 'C5', dur: 200, gap: 60 },
+        { note: 'A4', dur: 500, gap: 180 },
+        { note: 'C4', dur: 200, gap: 60 }, { note: 'E4', dur: 200, gap: 60 },
+        { note: 'A4', dur: 200, gap: 60 }, { note: 'B4', dur: 500, gap: 180 },
+        { note: 'E4', dur: 200, gap: 60 }, { note: 'G#4', dur: 200, gap: 60 },
+        { note: 'B4', dur: 200, gap: 60 }, { note: 'C5', dur: 500, gap: 200 }
+      ]
+    };
+
+    songSelect.addEventListener('change', (e) => {
+      const songKey = e.target.value;
+      if (!songKey || isPlayingBack || isRecording) return;
+
+      const rawNotes = SONGS[songKey];
+      // 轉換為事件時間戳陣列
+      const events = [];
+      let cur = 0;
+      rawNotes.forEach(item => {
+        events.push({ note: item.note, type: 'start', time: cur });
+        cur += item.dur;
+        events.push({ note: item.note, type: 'stop', time: cur });
+        cur += item.gap;
+      });
+
+      playSequence(events, () => {
+        songSelect.value = '';
+      });
+    });
+
+    /* =========================================================
+       8. 說明彈窗控制
+    ========================================================= */
+    const modalOverlay = document.getElementById('modalOverlay');
+    const guideBtn = document.getElementById('guideBtn');
+    const closeModal = document.getElementById('closeModal');
+
+    guideBtn.addEventListener('click', () => modalOverlay.classList.add('open'));
+    closeModal.addEventListener('click', () => modalOverlay.classList.remove('open'));
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+    });
+  </script>
+</body>
+</html>
