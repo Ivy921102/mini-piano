@@ -1,2 +1,2 @@
-# mini-piano2.0
+# mini-piano
 迷你鋼琴
