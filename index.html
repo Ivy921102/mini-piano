@@ -93,7 +93,6 @@
       transition: all 0.3s ease;
     }
 
-    /* 全螢幕模式 */
     :fullscreen .piano-app,
     :-webkit-full-screen .piano-app {
       width: 100vw;
@@ -167,7 +166,6 @@
       color: var(--text-sub);
     }
 
-    /* 圓角藥丸按鈕與選單 */
     button, select {
       font-family: inherit;
       font-size: 0.83rem;
@@ -218,7 +216,6 @@
       100% { transform: scale(1); }
     }
 
-    /* 主題色按鈕外觀微調 */
     .theme-btn {
       padding: 5px 11px;
       font-size: 0.8rem;
@@ -283,7 +280,6 @@
       height: 100%;
     }
 
-    /* 琴鍵規格 */
     .key {
       position: relative;
       display: flex;
@@ -316,7 +312,6 @@
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
     }
 
-    /* 唱名與按鍵文字標籤 */
     .key-label {
       display: flex;
       flex-direction: column;
@@ -347,7 +342,6 @@
       display: none;
     }
 
-    /* 視覺回饋與示範亮鍵樣式 */
     .enable-feedback .white-key.active,
     .white-key.auto-highlight {
       background: linear-gradient(to bottom, #FFFFFF 20%, var(--highlight-white) 100%) !important;
@@ -363,12 +357,10 @@
       box-shadow: 0 0 18px var(--key-glow-black), 0 3px 6px rgba(0,0,0,0.45) !important;
     }
 
-    /* 隱藏的錄影專用 Canvas */
     #videoCanvas {
       display: none;
     }
 
-    /* 底部說明 */
     footer {
       display: flex;
       justify-content: space-between;
@@ -426,7 +418,7 @@
         </div>
       </div>
 
-      <!-- 第二列：演奏設定與完整示範曲庫 -->
+      <!-- 第二列：演奏設定與完整示範曲庫 (無卡農，全部完整) -->
       <div class="toolbar-row">
         <div class="btn-group">
           <span class="group-label">演奏設置:</span>
@@ -440,14 +432,13 @@
           <select id="songSelect">
             <option value="none">-- 選擇完整樂曲 --</option>
             <optgroup label="童謠系列 (完整版)">
-              <option value="star">★ 小星星 (三段體完整版)</option>
-              <option value="twoTigers">🐯 兩隻老虎 (完整輪唱)</option>
-              <option value="littleBee">🐝 小蜜蜂 (輕快完整版)</option>
+              <option value="star">★ 小星星 (完整三段體 A-B-A 全曲)</option>
+              <option value="twoTigers">🐯 兩隻老虎 (四樂句輪唱完整版)</option>
+              <option value="littleBee">🐝 小蜜蜂 (經典德國民謠完整版)</option>
             </optgroup>
-            <optgroup label="古典音樂系列 (經典完整樂段)">
-              <option value="elise">♫ 給愛麗絲 (貝多芬完整主題)</option>
-              <option value="odeToJoy">☀️ 歡樂頌 (第九號交響曲主題)</option>
-              <option value="canon">⛪ 卡農 (經典低音與旋律推進)</option>
+            <optgroup label="古典音樂系列 (完整版)">
+              <option value="elise">♫ 給愛麗絲 (貝多芬完整主題與過門再現)</option>
+              <option value="odeToJoy">☀️ 歡樂頌 (第九號交響曲第四樂章完整主題)</option>
             </optgroup>
           </select>
           <button id="playSongBtn">▶ 播放完整示範</button>
@@ -520,7 +511,7 @@
     ];
 
     /* ========================================================
-       2. Web Audio API 音效引擎與數位串流節點 (Stream Destination)
+       2. Web Audio API 音效引擎與數位串流節點
        ======================================================== */
     let audioCtx = null;
     let streamDest = null;
@@ -528,7 +519,6 @@
     let visualFeedback = true;
     const activeVoices = new Map();
 
-    // PCM 原始錄音陣列 (用於精準生成標準 WAV 檔案)
     let pcmSampleRate = 44100;
     let pcmBuffers = [];
     let pcmRecorderNode = null;
@@ -539,10 +529,8 @@
         audioCtx = new AudioContextClass();
         pcmSampleRate = audioCtx.sampleRate;
 
-        // 串流節點，供應 MediaRecorder 即時錄製
         streamDest = audioCtx.createMediaStreamDestination();
 
-        // 建立 ScriptProcessor 用於抓取純淨無損 PCM 數據供 WAV 導出
         pcmRecorderNode = audioCtx.createScriptProcessor(4096, 1, 1);
         pcmRecorderNode.onaudioprocess = (e) => {
           if (isRecording) {
@@ -550,7 +538,7 @@
             pcmBuffers.push(new Float32Array(input));
           }
         };
-        // 保持節點活躍
+
         const silentGain = audioCtx.createGain();
         silentGain.gain.value = 0;
         pcmRecorderNode.connect(silentGain);
@@ -586,7 +574,6 @@
       osc1.connect(masterGain);
       osc2Gain.connect(masterGain);
 
-      // 分別輸出至：本機喇叭、錄音串流與 PCM 擷取節點
       masterGain.connect(ctx.destination);
       if (streamDest) masterGain.connect(streamDest);
       if (pcmRecorderNode) masterGain.connect(pcmRecorderNode);
@@ -652,7 +639,7 @@
     }
 
     /* ========================================================
-       3. 琴鍵建置與彈性佈局
+       3. 琴鍵建置與自適應佈局
        ======================================================== */
     const pianoKeysEl = document.getElementById('pianoKeys');
     const noteMapByNote = new Map();
@@ -692,7 +679,6 @@
           pianoKeysEl.appendChild(keyEl);
           whiteIndex++;
         } else {
-          // 精密百分比定位
           const percent = (whiteIndex / TOTAL_WHITE_KEYS) * 100 - (4.2 / 2);
           keyEl.style.left = `${percent}%`;
           pianoKeysEl.appendChild(keyEl);
@@ -733,7 +719,6 @@
       });
     });
 
-    // 觸控滑動滑奏 (Glissando)
     let currentTouchNote = null;
     pianoKeysEl.addEventListener('touchstart', handleTouch, { passive: false });
     pianoKeysEl.addEventListener('touchmove', handleTouch, { passive: false });
@@ -764,7 +749,6 @@
       }
     }
 
-    // 電腦鍵盤按鍵對應
     const pressedKeys = new Set();
     window.addEventListener('keydown', (e) => {
       if (e.repeat) return;
@@ -784,7 +768,7 @@
     });
 
     /* ========================================================
-       5. 主題配色切換與自適應文字亮度演算法
+       5. 主題配色與智慧亮度對比演算法
        ======================================================== */
     const THEMES = {
       pastel: {
@@ -873,7 +857,6 @@
       });
     });
 
-    // 自選色盤並計算 W3C 對比度
     const customColorPicker = document.getElementById('customColorPicker');
     customColorPicker.addEventListener('input', (e) => {
       document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
@@ -883,7 +866,6 @@
       const g = (rgb >> 8) & 255;
       const b = rgb & 255;
 
-      // 計算相對亮度 (Luminance)
       const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
       const isDark = lum < 0.45;
 
@@ -942,79 +924,93 @@
     });
 
     /* ========================================================
-       7. 完整曲庫 (童謠 3 首、古典名曲 3 首)
+       7. 完整曲庫 (刪除卡農，其餘曲目均完整化)
        ======================================================== */
     const SONGS = {
-      // 1. 小星星 (完整三段體 A-B-A 旋律)
+      // 1. 小星星 (完整三段體 A-B-A 旋律，全曲 42 音)
       star: [
+        // A段 主題
         ['C4', 400], ['C4', 400], ['G4', 400], ['G4', 400], ['A4', 400], ['A4', 400], ['G4', 800],
         ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 400], ['D4', 400], ['C4', 800],
+        // B段 中間發展
         ['G4', 400], ['G4', 400], ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 800],
         ['G4', 400], ['G4', 400], ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 800],
+        // A'段 主題再現
         ['C4', 400], ['C4', 400], ['G4', 400], ['G4', 400], ['A4', 400], ['A4', 400], ['G4', 800],
         ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 400], ['D4', 400], ['C4', 800]
       ],
-      // 2. 兩隻老虎 (完整版)
+
+      // 2. 兩隻老虎 (四樂句輪唱完整版，全曲 32 音)
       twoTigers: [
-        ['C4', 350], ['D4', 350], ['E4', 350], ['C4', 350],
-        ['C4', 350], ['D4', 350], ['E4', 350], ['C4', 350],
-        ['E4', 350], ['F4', 350], ['G4', 700],
-        ['E4', 350], ['F4', 350], ['G4', 700],
-        ['G4', 260], ['A4', 260], ['G4', 260], ['F4', 260], ['E4', 350], ['C4', 350],
-        ['G4', 260], ['A4', 260], ['G4', 260], ['F4', 260], ['E4', 350], ['C4', 350],
-        ['D4', 350], ['G4', 350], ['C4', 700],
-        ['D4', 350], ['G4', 350], ['C4', 700]
+        // 兩隻老虎，兩隻老虎
+        ['C4', 360], ['D4', 360], ['E4', 360], ['C4', 360],
+        ['C4', 360], ['D4', 360], ['E4', 360], ['C4', 360],
+        // 跑得快，跑得快
+        ['E4', 360], ['F4', 360], ['G4', 720],
+        ['E4', 360], ['F4', 360], ['G4', 720],
+        // 一隻沒有眼睛，一隻沒有尾巴
+        ['G4', 270], ['A4', 270], ['G4', 270], ['F4', 270], ['E4', 360], ['C4', 360],
+        ['G4', 270], ['A4', 270], ['G4', 270], ['F4', 270], ['E4', 360], ['C4', 360],
+        // 真奇怪，真奇怪
+        ['D4', 360], ['G4', 360], ['C4', 720],
+        ['D4', 360], ['G4', 360], ['C4', 720]
       ],
-      // 3. 小蜜蜂 (完整版)
+
+      // 3. 小蜜蜂 (經典德國民謠完整版，全曲 23 音)
       littleBee: [
+        // 嗡嗡嗡，嗡嗡嗡，大家一起來做工
         ['G4', 380], ['E4', 380], ['E4', 760],
         ['F4', 380], ['D4', 380], ['D4', 760],
         ['C4', 380], ['D4', 380], ['E4', 380], ['F4', 380],
         ['G4', 380], ['G4', 380], ['G4', 760],
+        // 來匆匆，去匆匆，做工趣味濃
         ['G4', 380], ['E4', 380], ['E4', 760],
         ['F4', 380], ['D4', 380], ['D4', 760],
         ['C4', 380], ['E4', 380], ['G4', 380], ['G4', 380],
         ['C4', 900]
       ],
-      // 4. 給愛麗絲 (貝多芬完整經典主題)
+
+      // 4. 給愛麗絲 (貝多芬完整經典主題部與過門再現)
       elise: [
-        ['E5', 250], ['D#5', 250], ['E5', 250], ['D#5', 250], ['E5', 250], ['B4', 250], ['D5', 250], ['C5', 250],
-        ['A4', 500], ['REST', 120],
-        ['C4', 250], ['E4', 250], ['A4', 250], ['B4', 500], ['REST', 120],
-        ['E4', 250], ['G#4', 250], ['B4', 250], ['C5', 500], ['REST', 120],
-        ['E4', 250],
-        ['E5', 250], ['D#5', 250], ['E5', 250], ['D#5', 250], ['E5', 250], ['B4', 250], ['D5', 250], ['C5', 250],
-        ['A4', 500], ['REST', 120],
-        ['C4', 250], ['E4', 250], ['A4', 250], ['B4', 500], ['REST', 120],
-        ['E4', 250], ['C5', 250], ['B4', 250], ['A4', 700], ['REST', 150],
-        // 進入過門中段
-        ['B4', 250], ['C5', 250], ['D5', 250], ['E5', 500],
-        ['G4', 250], ['F5', 250], ['E5', 250], ['D5', 500],
-        ['F4', 250], ['E5', 250], ['D5', 250], ['C5', 500],
-        ['E4', 250], ['D5', 250], ['C5', 250], ['B4', 600],
-        // 再現主題
-        ['E4', 250],
-        ['E5', 250], ['D#5', 250], ['E5', 250], ['D#5', 250], ['E5', 250], ['B4', 250], ['D5', 250], ['C5', 250],
-        ['A4', 700]
+        // 主題首段
+        ['E5', 240], ['D#5', 240], ['E5', 240], ['D#5', 240], ['E5', 240], ['B4', 240], ['D5', 240], ['C5', 240],
+        ['A4', 480], ['REST', 120],
+        ['C4', 240], ['E4', 240], ['A4', 240], ['B4', 480], ['REST', 120],
+        ['E4', 240], ['G#4', 240], ['B4', 240], ['C5', 480], ['REST', 120],
+        ['E4', 240],
+        // 主題後續段落
+        ['E5', 240], ['D#5', 240], ['E5', 240], ['D#5', 240], ['E5', 240], ['B4', 240], ['D5', 240], ['C5', 240],
+        ['A4', 480], ['REST', 120],
+        ['C4', 240], ['E4', 240], ['A4', 240], ['B4', 480], ['REST', 120],
+        ['E4', 240], ['C5', 240], ['B4', 240], ['A4', 680], ['REST', 150],
+        // 中段過門過渡
+        ['B4', 240], ['C5', 240], ['D5', 240], ['E5', 480],
+        ['G4', 240], ['F5', 240], ['E5', 240], ['D5', 480],
+        ['F4', 240], ['E5', 240], ['D5', 240], ['C5', 480],
+        ['E4', 240], ['D5', 240], ['C5', 240], ['B4', 600],
+        // 主題再現部
+        ['E4', 240],
+        ['E5', 240], ['D#5', 240], ['E5', 240], ['D#5', 240], ['E5', 240], ['B4', 240], ['D5', 240], ['C5', 240],
+        ['A4', 480], ['REST', 120],
+        ['C4', 240], ['E4', 240], ['A4', 240], ['B4', 480], ['REST', 120],
+        ['E4', 240], ['C5', 240], ['B4', 240], ['A4', 750]
       ],
-      // 5. 歡樂頌 (第九號交響曲完整主題)
+
+      // 5. 歡樂頌 (第九號交響曲第四樂章完整主題，全曲 62 音)
       odeToJoy: [
+        // 第一句
         ['E4', 360], ['E4', 360], ['F4', 360], ['G4', 360], ['G4', 360], ['F4', 360], ['E4', 360], ['D4', 360],
         ['C4', 360], ['C4', 360], ['D4', 360], ['E4', 360], ['E4', 500], ['D4', 200], ['D4', 720],
+        // 第二句
         ['E4', 360], ['E4', 360], ['F4', 360], ['G4', 360], ['G4', 360], ['F4', 360], ['E4', 360], ['D4', 360],
         ['C4', 360], ['C4', 360], ['D4', 360], ['E4', 360], ['D4', 500], ['C4', 200], ['C4', 720],
-        ['D4', 360], ['D4', 360], ['E4', 360], ['C4', 360], ['D4', 360], ['E4', 180], ['F4', 180], ['E4', 360], ['C4', 360],
+        // 第三句 (中間發展模進句)
+        ['D4', 360], ['D4', 360], ['E4', 360], ['C4', 360],
+        ['D4', 360], ['E4', 180], ['F4', 180], ['E4', 360], ['C4', 360],
         ['D4', 360], ['E4', 180], ['F4', 180], ['E4', 360], ['D4', 360], ['C4', 360], ['D4', 360], ['G4', 720],
+        // 第四句 (主題再現結尾)
         ['E4', 360], ['E4', 360], ['F4', 360], ['G4', 360], ['G4', 360], ['F4', 360], ['E4', 360], ['D4', 360],
-        ['C4', 360], ['C4', 360], ['D4', 360], ['E4', 360], ['D4', 500], ['C4', 200], ['C4', 720]
-      ],
-      // 6. 卡農 (經典旋律段落)
-      canon: [
-        ['E5', 400], ['D5', 400], ['C5', 400], ['B4', 400], ['A4', 400], ['G4', 400], ['A4', 400], ['B4', 400],
-        ['C5', 400], ['B4', 400], ['A4', 400], ['G4', 400], ['F4', 400], ['E4', 400], ['F4', 400], ['G4', 400],
-        ['E4', 200], ['G4', 200], ['C5', 200], ['E5', 200], ['D5', 200], ['F4', 200], ['B4', 200], ['D5', 200],
-        ['C5', 200], ['E4', 200], ['A4', 200], ['C5', 200], ['B4', 200], ['D4', 200], ['G4', 200], ['B4', 200],
-        ['A4', 800]
+        ['C4', 360], ['C4', 360], ['D4', 360], ['E4', 360], ['D4', 500], ['C4', 200], ['C4', 800]
       ]
     };
 
@@ -1091,7 +1087,6 @@
     let recordedVideoChunks = [];
     let canvasAnimId = null;
 
-    // 啟動 Canvas 即時繪製（用於錄影，保證音畫 100% 同步無延遲）
     function renderPianoFrame() {
       canvasCtx.fillStyle = '#232128';
       canvasCtx.fillRect(0, 0, videoCanvas.width, videoCanvas.height);
@@ -1100,7 +1095,6 @@
       const totalH = videoCanvas.height;
       const whiteW = totalW / TOTAL_WHITE_KEYS;
 
-      // 繪製白鍵
       let wIdx = 0;
       NOTES.forEach(n => {
         if (n.type === 'white') {
@@ -1111,7 +1105,6 @@
           canvasCtx.fillRect(wIdx * whiteW + 1, 0, whiteW - 2, totalH - 4);
           canvasCtx.strokeRect(wIdx * whiteW + 1, 0, whiteW - 2, totalH - 4);
 
-          // 唱名標籤
           canvasCtx.fillStyle = '#5A5064';
           canvasCtx.font = 'bold 15px sans-serif';
           canvasCtx.textAlign = 'center';
@@ -1120,7 +1113,6 @@
         }
       });
 
-      // 繪製黑鍵
       wIdx = 0;
       const blackW = whiteW * 0.62;
       const blackH = totalH * 0.6;
@@ -1165,7 +1157,6 @@
         exportMp4Btn.disabled = true;
         statusBadge.textContent = '⏺ 正在錄音中 (包含音訊與影格串流)...';
 
-        // 1. 純音訊 MediaRecorder (用於 MP3/音訊檔案)
         try {
           const audioMime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/webm';
           mediaRecorder = new MediaRecorder(streamDest.stream, { mimeType: audioMime });
@@ -1177,7 +1168,6 @@
           console.warn('Audio MediaRecorder 啟動失敗:', err);
         }
 
-        // 2. 視訊 Canvas 影音串流 (用於 MP4 影片)
         try {
           renderPianoFrame();
           const canvasStream = videoCanvas.captureStream(30);
@@ -1199,7 +1189,6 @@
         }
 
       } else {
-        // 停止錄音
         isRecording = false;
         recordBtn.classList.remove('recording');
         recordBtn.textContent = '⏺ 開始錄音';
@@ -1217,7 +1206,6 @@
       }
     });
 
-    // 回放當前錄音
     playRecordBtn.addEventListener('click', () => {
       if (recordedEvents.length === 0) return;
       stopAllPlaying();
@@ -1245,7 +1233,6 @@
        9. 標準 16-bit PCM WAV 無損音訊檔案編碼 (通用手機電腦直接播)
        ======================================================== */
     function encodeWAV(buffers, sampleRate) {
-      // 合併所有 Float32Array 緩衝區
       let totalLength = buffers.reduce((acc, b) => acc + b.length, 0);
       let merged = new Float32Array(totalLength);
       let offset = 0;
@@ -1254,7 +1241,6 @@
         offset += buf.length;
       }
 
-      // 建立 44 位元組 RIFF 標頭 + 16-bit PCM 資料
       const buffer = new ArrayBuffer(44 + totalLength * 2);
       const view = new DataView(buffer);
 
@@ -1269,16 +1255,15 @@
       writeString(view, 8, 'WAVE');
       writeString(view, 12, 'fmt ');
       view.setUint32(16, 16, true);
-      view.setUint16(20, 1, true); // PCM 格式
-      view.setUint16(22, 1, true); // 單聲道
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
       view.setUint32(24, sampleRate, true);
       view.setUint32(28, sampleRate * 2, true);
-      view.setUint16(32, 2, true); // block align
-      view.setUint16(34, 16, true); // 16-bit
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
       writeString(view, 36, 'data');
       view.setUint32(40, totalLength * 2, true);
 
-      // 寫入 16-bit PCM
       let index = 44;
       for (let i = 0; i < totalLength; i++) {
         let s = Math.max(-1, Math.min(1, merged[i]));
@@ -1289,7 +1274,6 @@
       return new Blob([view], { type: 'audio/wav' });
     }
 
-    // 匯出 WAV
     exportWavBtn.addEventListener('click', () => {
       if (pcmBuffers.length === 0) {
         alert('尚無足夠的音訊資料可匯出！');
@@ -1300,10 +1284,8 @@
       statusBadge.textContent = '已下載無損 WAV 音訊檔 (雙擊即可播放) 🎵';
     });
 
-    // 匯出 MP3 / 音訊檔
     exportMp3Btn.addEventListener('click', () => {
       if (recordedAudioChunks.length === 0) {
-        // 若無 chunks，則轉存 WAV 確保有檔案
         exportWavBtn.click();
         return;
       }
@@ -1312,7 +1294,6 @@
       statusBadge.textContent = '已匯出 MP3 音訊檔 🎵';
     });
 
-    // 匯出 MP4 影片檔 (零延遲音畫同步)
     exportMp4Btn.addEventListener('click', () => {
       if (recordedVideoChunks.length === 0) {
         alert('尚無視訊資料可匯出，請先錄音彈奏！');
