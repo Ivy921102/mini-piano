@@ -6,22 +6,24 @@
   <title>迷你鋼琴</title>
   <style>
     :root {
-      --bg-start: #FFE8E8;
-      --bg-end: #EDE8F5;
-      --glow-1: #FFCAD4;
-      --glow-2: #D8B4F8;
-      --text-color: #2D283E;
+      --bg-gradient: linear-gradient(135deg, #FFE8E8 0%, #F5E8FF 50%, #EDE8F5 100%);
       --card-bg: rgba(255, 255, 255, 0.78);
       --card-border: rgba(255, 255, 255, 0.9);
-      --btn-bg: rgba(255, 255, 255, 0.88);
-      --btn-text: #2D283E;
-      --btn-border: rgba(255, 255, 255, 0.9);
+      --text-main: #4A4453;
+      --text-sub: #7A7285;
+      --btn-bg: rgba(255, 255, 255, 0.9);
+      --btn-border: rgba(210, 195, 225, 0.6);
+      --primary: #FF758C;
+      --primary-hover: #FF5E7E;
       --white-key-bg: #FFFFFF;
-      --white-key-border: #E2DFDE;
+      --white-key-border: #DDD8D5;
       --black-key-bg: #2B2830;
       --highlight-white: #FFE4ED;
-      --highlight-white-border: #FF85A2;
+      --highlight-white-border: #FF758C;
       --highlight-black: #D291BC;
+      --shadow-card: 0 16px 40px rgba(130, 110, 150, 0.18);
+      --key-glow-white: rgba(255, 117, 140, 0.65);
+      --key-glow-black: rgba(210, 145, 188, 0.9);
     }
 
     * {
@@ -33,59 +35,58 @@
     }
 
     body {
-      font-family: 'Nunito', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-      color: var(--text-color);
-      background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+      padding: 16px;
+      background: var(--bg-gradient);
       background-attachment: fixed;
+      color: var(--text-main);
+      transition: background 0.4s ease, color 0.3s ease;
       position: relative;
       overflow-x: hidden;
-      transition: background 0.4s ease, color 0.4s ease;
     }
 
-    /* 柔焦裝飾球 */
+    /* 頂部裝飾柔光球 */
     .glow-sphere {
       position: fixed;
       border-radius: 50%;
-      filter: blur(80px);
+      filter: blur(90px);
       z-index: 0;
       pointer-events: none;
       opacity: 0.55;
-      transition: background 0.4s ease;
     }
     .glow-1 {
-      width: 450px;
-      height: 450px;
-      background: var(--glow-1);
-      top: -80px;
-      left: -80px;
+      width: 480px;
+      height: 480px;
+      background: rgba(255, 180, 200, 0.7);
+      top: -120px;
+      left: -120px;
     }
     .glow-2 {
-      width: 500px;
-      height: 500px;
-      background: var(--glow-2);
-      bottom: -100px;
-      right: -100px;
+      width: 520px;
+      height: 520px;
+      background: rgba(190, 170, 255, 0.7);
+      bottom: -140px;
+      right: -140px;
     }
 
-    /* 主應用容器 */
+    /* 主應用卡片容器 */
     .piano-app {
       position: relative;
       z-index: 1;
-      width: 96vw;
-      max-width: 1300px;
+      width: 98vw;
+      max-width: 1350px;
       background: var(--card-bg);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--card-border);
-      border-radius: 28px;
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
-      padding: 24px 30px;
+      border-radius: 26px;
+      box-shadow: var(--shadow-card);
+      padding: 20px 26px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -103,43 +104,41 @@
       justify-content: space-between;
     }
 
-    /* 頂部標頭 */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding-bottom: 12px;
-      border-bottom: 2px dashed rgba(150, 150, 150, 0.25);
+      border-bottom: 2px dashed rgba(180, 170, 200, 0.35);
     }
 
-    .title-group {
+    .title-area {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     h1 {
-      font-size: 1.7rem;
+      font-size: 1.65rem;
       font-weight: 800;
+      letter-spacing: 0.5px;
       display: flex;
       align-items: center;
       gap: 8px;
-      color: var(--text-color);
-      transition: color 0.3s ease;
     }
 
     .status-badge {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       background: rgba(255, 255, 255, 0.7);
-      color: var(--text-color);
-      border: 1px solid rgba(150, 150, 150, 0.3);
-      padding: 5px 14px;
-      border-radius: 30px;
+      color: var(--text-main);
+      border: 1px solid var(--btn-border);
+      padding: 4px 12px;
+      border-radius: 20px;
       font-weight: 700;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
     }
 
-    /* 控制列工具 */
+    /* 控制面板設計 */
     .toolbar {
       display: flex;
       flex-direction: column;
@@ -151,118 +150,147 @@
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .btn-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
     }
 
-    .theme-label {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-color);
+    .group-label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-right: 4px;
+      color: var(--text-sub);
     }
 
-    button, select, input[type="text"], input[type="color"] {
+    /* 圓角藥丸按鈕與選單 */
+    button, select {
       font-family: inherit;
-      font-size: 0.85rem;
+      font-size: 0.83rem;
       font-weight: 700;
-      padding: 8px 14px;
+      padding: 7px 14px;
       border-radius: 20px;
       border: 1px solid var(--btn-border);
       cursor: pointer;
       outline: none;
       transition: all 0.2s cubic-bezier(0.2, 0.8, 0.3, 1);
       background: var(--btn-bg);
-      color: var(--btn-text);
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+      color: var(--text-main);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
 
     button:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.12);
-      filter: brightness(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      filter: brightness(1.03);
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(0);
     }
 
     button:disabled {
-      opacity: 0.5;
+      opacity: 0.45;
       cursor: not-allowed;
+      transform: none;
     }
 
     button.active {
-      background: linear-gradient(135deg, #FF85A2, #A463F8);
+      background: var(--primary);
       color: #FFFFFF !important;
       border-color: transparent;
-      box-shadow: 0 4px 12px rgba(164, 99, 248, 0.35);
+      box-shadow: 0 3px 10px rgba(255, 117, 140, 0.4);
     }
 
     button.recording {
-      background: #FF4757 !important;
+      background: #FF3366 !important;
       color: #FFFFFF !important;
-      animation: pulse 1s infinite;
+      animation: recPulse 1.2s infinite;
     }
 
-    @keyframes pulse {
+    @keyframes recPulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.04); box-shadow: 0 0 14px rgba(255, 71, 87, 0.7); }
+      50% { transform: scale(1.05); box-shadow: 0 0 16px rgba(255, 51, 102, 0.8); }
       100% { transform: scale(1); }
     }
 
+    /* 主題色按鈕外觀微調 */
+    .theme-btn {
+      padding: 5px 11px;
+      font-size: 0.8rem;
+    }
+
+    .color-picker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
+      padding: 3px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
     input[type="color"] {
-      width: 36px;
-      height: 36px;
-      padding: 2px;
+      -webkit-appearance: none;
+      border: none;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       cursor: pointer;
-      border: 2px solid #FFFFFF;
-      vertical-align: middle;
+      background: none;
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    input[type="color"]::-webkit-color-swatch {
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 50%;
     }
 
     /* 鋼琴自適應容器 */
-    .piano-container {
+    .piano-box {
       width: 100%;
-      background: #25232A;
-      border-radius: 22px;
-      padding: 12px 14px 16px 14px;
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
+      background: #232128;
+      border-radius: 20px;
+      padding: 10px 12px 14px 12px;
+      box-shadow: 0 14px 38px rgba(25, 20, 35, 0.35);
       position: relative;
       display: flex;
       justify-content: center;
     }
 
-    :fullscreen .piano-container,
-    :-webkit-full-screen .piano-container {
+    :fullscreen .piano-box,
+    :-webkit-full-screen .piano-box {
       flex: 1;
       height: 100%;
-      min-height: 380px;
+      min-height: 400px;
     }
 
     .piano-keys {
       position: relative;
       display: flex;
       width: 100%;
-      height: 270px;
-      max-width: 1220px;
+      height: 280px;
     }
 
     :fullscreen .piano-keys,
     :-webkit-full-screen .piano-keys {
       height: 100%;
-      max-width: none;
     }
 
-    /* 琴鍵基礎設置 */
+    /* 琴鍵規格 */
     .key {
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
-      padding-bottom: 14px;
+      padding-bottom: 12px;
       cursor: pointer;
       transition: background 0.08s ease, transform 0.08s ease, box-shadow 0.08s ease;
     }
@@ -272,10 +300,10 @@
       height: 100%;
       background: var(--white-key-bg);
       border: 1px solid var(--white-key-border);
-      border-radius: 0 0 10px 10px;
-      margin: 0 1.5px;
+      border-radius: 0 0 9px 9px;
+      margin: 0 1.2px;
       z-index: 1;
-      box-shadow: 0 5px 6px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
     }
 
     .black-key {
@@ -283,12 +311,12 @@
       width: 4.2%;
       height: 60%;
       background: var(--black-key-bg);
-      border-radius: 0 0 8px 8px;
+      border-radius: 0 0 7px 7px;
       z-index: 2;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.35);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
     }
 
-    /* 琴鍵標籤 */
+    /* 唱名與按鍵文字標籤 */
     .key-label {
       display: flex;
       flex-direction: column;
@@ -298,45 +326,45 @@
     }
 
     .solfege {
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       font-weight: 800;
     }
 
     .kbd-hint {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      padding: 2px 5px;
+      padding: 2px 4px;
       border-radius: 4px;
     }
 
-    .white-key .solfege { color: #5D5468; }
-    .white-key .kbd-hint { background: #F3EBF4; color: #8F829A; }
+    .white-key .solfege { color: #4A4453; }
+    .white-key .kbd-hint { background: #EEE8EE; color: #7F738A; }
 
-    .black-key .solfege { color: #FFD3E2; }
-    .black-key .kbd-hint { background: #4D4559; color: #FFF; }
+    .black-key .solfege { color: #FFD4E4; }
+    .black-key .kbd-hint { background: #4D4559; color: #FFFFFF; }
 
     .hide-labels .key-label {
       display: none;
     }
 
-    /* 視覺回饋與亮燈特效 */
+    /* 視覺回饋與示範亮鍵樣式 */
     .enable-feedback .white-key.active,
     .white-key.auto-highlight {
-      background: linear-gradient(to bottom, #FFFFFF 30%, #FFE4ED 100%) !important;
+      background: linear-gradient(to bottom, #FFFFFF 20%, var(--highlight-white) 100%) !important;
       transform: translateY(4px);
       border-color: var(--highlight-white-border) !important;
-      box-shadow: 0 2px 14px rgba(255, 133, 162, 0.6), inset 0 -3px 8px rgba(255, 133, 162, 0.3) !important;
+      box-shadow: 0 2px 16px var(--key-glow-white), inset 0 -3px 8px var(--key-glow-white) !important;
     }
 
     .enable-feedback .black-key.active,
     .black-key.auto-highlight {
-      background: linear-gradient(to bottom, #3A3542 0%, #D291BC 100%) !important;
+      background: linear-gradient(to bottom, #3E3848 0%, var(--highlight-black) 100%) !important;
       transform: translateY(3px);
-      box-shadow: 0 0 16px rgba(210, 145, 188, 0.9), 0 3px 6px rgba(0,0,0,0.4) !important;
+      box-shadow: 0 0 18px var(--key-glow-black), 0 3px 6px rgba(0,0,0,0.45) !important;
     }
 
-    /* 隱藏的錄製畫布 (用於產生 MP4 影片) */
-    #renderCanvas {
+    /* 隱藏的錄影專用 Canvas */
+    #videoCanvas {
       display: none;
     }
 
@@ -345,115 +373,123 @@
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
       font-size: 0.82rem;
-      color: var(--text-color);
-      opacity: 0.85;
-      border-top: 1px dashed rgba(150, 150, 150, 0.25);
+      color: var(--text-sub);
+      border-top: 1px dashed rgba(180, 170, 200, 0.35);
       padding-top: 10px;
     }
 
-    .shortcut-badge {
-      background: rgba(255, 255, 255, 0.6);
-      padding: 2px 6px;
-      border-radius: 5px;
+    .kbd-tag {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 1px 6px;
+      border-radius: 4px;
       font-family: monospace;
       font-weight: 700;
+      border: 1px solid var(--btn-border);
     }
   </style>
 </head>
 <body>
 
-  <div class="glow-sphere glow-1"></div>
-  <div class="glow-sphere glow-2"></div>
+  <div class="glow-sphere glow-1" id="glow1"></div>
+  <div class="glow-sphere glow-2" id="glow2"></div>
+
+  <!-- 用於錄影渲染影格的離屏 Canvas -->
+  <canvas id="videoCanvas" width="960" height="320"></canvas>
 
   <div class="piano-app" id="pianoApp">
     <header>
-      <div class="title-group">
+      <div class="title-area">
         <h1>🎹 迷你鋼琴</h1>
         <div id="statusBadge" class="status-badge">✨ 準備就緒</div>
       </div>
       <div class="btn-group">
-        <button id="toggleFullscreenBtn">⛶ 全螢幕模式</button>
+        <button id="fullscreenBtn">⛶ 全螢幕模式</button>
       </div>
     </header>
 
     <div class="toolbar">
-      <!-- 列一：主題色系切換與自由調色盤 -->
+      <!-- 第一列：主題切換與自訂色盤 -->
       <div class="toolbar-row">
         <div class="btn-group">
-          <span class="theme-label">🎨 風格主題：</span>
-          <select id="themeSelect">
-            <option value="peach">🌸 夢幻蜜桃紫</option>
-            <option value="dark">🌙 星空黑耀夜</option>
-            <option value="matcha">🍵 清新莫蘭迪綠</option>
-            <option value="sunset">🌅 落日暖陽橘</option>
-            <option value="ocean">🌊 蔚藍晴空海</option>
-          </select>
-          <span class="theme-label">自由選色：</span>
-          <input type="color" id="customColorPicker" value="#FFE8E8" title="自訂背景色彩">
-        </div>
-
-        <div class="btn-group">
-          <button id="toggleFeedbackBtn" class="active">視覺回饋：開啟</button>
-          <button id="toggleLabelsBtn">唱名標籤：顯示</button>
-          <button id="toggleSustainBtn">延音效果：關閉</button>
+          <span class="group-label">主題配色:</span>
+          <button class="theme-btn active" data-theme="pastel">🌸 夢幻蜜桃紫</button>
+          <button class="theme-btn" data-theme="dark">🌙 極致星空黑</button>
+          <button class="theme-btn" data-theme="mint">🍵 清新薄荷綠</button>
+          <button class="theme-btn" data-theme="sunset">🌅 落日餘暉金</button>
+          <button class="theme-btn" data-theme="ocean">🌊 深海琉璃藍</button>
+          <label class="color-picker-wrap" title="點擊自選背景顏色">
+            <span>🎨 自選顏色</span>
+            <input type="color" id="customColorPicker" value="#FFE8E8" />
+          </label>
         </div>
       </div>
 
-      <!-- 列二：豐富完整的示範曲目 (古典與流行) -->
+      <!-- 第二列：演奏設定與完整示範曲庫 -->
       <div class="toolbar-row">
         <div class="btn-group">
-          <span class="theme-label">🎵 示範曲庫：</span>
+          <span class="group-label">演奏設置:</span>
+          <button id="feedbackBtn" class="active">視覺回饋：開啟</button>
+          <button id="labelsBtn">唱名標籤：顯示</button>
+          <button id="sustainBtn">延音效果：關閉</button>
+        </div>
+
+        <div class="btn-group">
+          <span class="group-label">完整曲庫:</span>
           <select id="songSelect">
-            <option value="none">-- 選擇示範曲目 (完整旋律) --</option>
-            <option value="jay_sunny">★ 周杰倫 - 晴天 (完整副歌)</option>
-            <option value="jolin_sun">★ 蔡依林 - 日不落 (完整副歌)</option>
-            <option value="star">♫ 小星星 (完整版 A-B-A)</option>
-            <option value="elise">♫ 給愛麗絲 (完整主題旋律)</option>
+            <option value="none">-- 選擇完整樂曲 --</option>
+            <optgroup label="童謠系列 (完整版)">
+              <option value="star">★ 小星星 (三段體完整版)</option>
+              <option value="twoTigers">🐯 兩隻老虎 (完整輪唱)</option>
+              <option value="littleBee">🐝 小蜜蜂 (輕快完整版)</option>
+            </optgroup>
+            <optgroup label="古典音樂系列 (經典完整樂段)">
+              <option value="elise">♫ 給愛麗絲 (貝多芬完整主題)</option>
+              <option value="odeToJoy">☀️ 歡樂頌 (第九號交響曲主題)</option>
+              <option value="canon">⛪ 卡農 (經典低音與旋律推進)</option>
+            </optgroup>
           </select>
-          <button id="playSongBtn">▶ 播放示範</button>
+          <button id="playSongBtn">▶ 播放完整示範</button>
           <button id="stopSongBtn">⏹ 停止</button>
         </div>
       </div>
 
-      <!-- 列三：錄音與真實音訊/影片 (WAV, MP3, MP4) 匯出 -->
+      <!-- 第三列：實體錄音與 WAV / MP3 / MP4 影音匯出 -->
       <div class="toolbar-row">
         <div class="btn-group">
+          <span class="group-label">實體錄音:</span>
           <button id="recordBtn">⏺ 開始錄音</button>
-          <button id="playRecordBtn" disabled>▶ 回放錄音</button>
+          <button id="playRecordBtn" disabled>▶ 回放錄製</button>
         </div>
 
         <div class="btn-group">
-          <span class="theme-label">匯出檔案：</span>
-          <button id="exportWavBtn" disabled>⬇ 匯出 WAV (無損音訊)</button>
-          <button id="exportMp3Btn" disabled>⬇ 匯出 MP3 (通用音訊)</button>
-          <button id="exportMp4Btn" disabled>🎬 匯出 MP4 (演奏影片)</button>
+          <span class="group-label">無損音檔 / 影音匯出:</span>
+          <button id="exportWavBtn" disabled>⬇ 匯出 WAV (通用無損音訊)</button>
+          <button id="exportMp3Btn" disabled>⬇ 匯出 MP3/音訊檔</button>
+          <button id="exportMp4Btn" disabled>🎬 匯出 MP4 影音檔</button>
         </div>
       </div>
     </div>
 
-    <!-- 鋼琴主鍵盤 -->
-    <div class="piano-container">
+    <!-- 鋼琴按鍵區域 -->
+    <div class="piano-box">
       <div class="piano-keys enable-feedback" id="pianoKeys"></div>
     </div>
 
-    <!-- 隱藏畫布：用以繪製琴鍵並側錄 MP4 影片 -->
-    <canvas id="renderCanvas" width="900" height="350"></canvas>
-
     <footer>
-      <div>💡 支援滑鼠點擊、按住滑動滑奏 (Glissando)、觸控與電腦實體鍵盤彈奏</div>
+      <div>💡 支援滑鼠點擊、按住滑動滑奏 (Glissando)、多點觸控與電腦鍵盤彈奏</div>
       <div>
-        低八度：<span class="shortcut-badge">A S D F G H J</span> / 黑鍵：<span class="shortcut-badge">W E T Y U</span>
-        | 高八度：<span class="shortcut-badge">K L ; ' Z X C V</span> / 黑鍵：<span class="shortcut-badge">O P [ ] \</span>
+        低八度：<span class="kbd-tag">A S D F G H J</span>（白） / <span class="kbd-tag">W E T Y U</span>（黑）
+        | 高八度：<span class="kbd-tag">K L ; ' Z X C V</span>（白） / <span class="kbd-tag">O P [ ] \</span>（黑）
       </div>
     </footer>
   </div>
 
   <script>
-    /* =========================================
-       1. 25 鍵音名與頻率資料庫 (中央 C4 至高音 C6)
-       ========================================= */
+    /* ========================================================
+       1. 25 鍵完整資料庫 (中央 C4 至高音 C6)
+       ======================================================== */
     const NOTES = [
       { note: 'C4',  solfege: 'Do',  freq: 261.63, key: 'a',  type: 'white' },
       { note: 'C#4', solfege: 'Di',  freq: 277.18, key: 'w',  type: 'black' },
@@ -483,27 +519,42 @@
       { note: 'C6',  solfege: 'Do',  freq: 1046.50, key: 'v', type: 'white' }
     ];
 
-    /* =========================================
-       2. Web Audio API 音效合成引擎與串流錄製
-       ========================================= */
+    /* ========================================================
+       2. Web Audio API 音效引擎與數位串流節點 (Stream Destination)
+       ======================================================== */
     let audioCtx = null;
-    let masterAudioDestination = null; // 用於音訊錄製的音源匯總節點
-    let audioMediaStreamDest = null;
+    let streamDest = null;
     let sustainEnabled = false;
-    let visualFeedbackEnabled = true;
+    let visualFeedback = true;
     const activeVoices = new Map();
+
+    // PCM 原始錄音陣列 (用於精準生成標準 WAV 檔案)
+    let pcmSampleRate = 44100;
+    let pcmBuffers = [];
+    let pcmRecorderNode = null;
 
     function getAudioContext() {
       if (!audioCtx) {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AudioContextClass();
+        pcmSampleRate = audioCtx.sampleRate;
 
-        // 建立音訊匯總節點，同時輸出至揚聲器與錄音節點
-        masterAudioDestination = audioCtx.createGain();
-        masterAudioDestination.connect(audioCtx.destination);
+        // 串流節點，供應 MediaRecorder 即時錄製
+        streamDest = audioCtx.createMediaStreamDestination();
 
-        audioMediaStreamDest = audioCtx.createMediaStreamDestination();
-        masterAudioDestination.connect(audioMediaStreamDest);
+        // 建立 ScriptProcessor 用於抓取純淨無損 PCM 數據供 WAV 導出
+        pcmRecorderNode = audioCtx.createScriptProcessor(4096, 1, 1);
+        pcmRecorderNode.onaudioprocess = (e) => {
+          if (isRecording) {
+            const input = e.inputBuffer.getChannelData(0);
+            pcmBuffers.push(new Float32Array(input));
+          }
+        };
+        // 保持節點活躍
+        const silentGain = audioCtx.createGain();
+        silentGain.gain.value = 0;
+        pcmRecorderNode.connect(silentGain);
+        silentGain.connect(audioCtx.destination);
       }
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
@@ -515,12 +566,10 @@
       const ctx = getAudioContext();
       const now = ctx.currentTime;
 
-      // 主震盪器 (正弦波)
       const osc1 = ctx.createOscillator();
       osc1.type = 'sine';
       osc1.frequency.setValueAtTime(freq, now);
 
-      // 泛音震盪器 (三角波，鋼琴木質共鳴)
       const osc2 = ctx.createOscillator();
       osc2.type = 'triangle';
       osc2.frequency.setValueAtTime(freq * 2, now);
@@ -529,20 +578,23 @@
       osc2Gain.gain.setValueAtTime(0.24, now);
       osc2.connect(osc2Gain);
 
-      // ADSR 音量包絡
-      const noteGain = ctx.createGain();
-      noteGain.gain.setValueAtTime(0.001, now);
-      noteGain.gain.exponentialRampToValueAtTime(0.65, now + 0.005);
-      noteGain.gain.exponentialRampToValueAtTime(0.38, now + 0.28);
+      const masterGain = ctx.createGain();
+      masterGain.gain.setValueAtTime(0.001, now);
+      masterGain.gain.exponentialRampToValueAtTime(0.68, now + 0.005);
+      masterGain.gain.exponentialRampToValueAtTime(0.38, now + 0.28);
 
-      osc1.connect(noteGain);
-      osc2Gain.connect(noteGain);
-      noteGain.connect(masterAudioDestination);
+      osc1.connect(masterGain);
+      osc2Gain.connect(masterGain);
+
+      // 分別輸出至：本機喇叭、錄音串流與 PCM 擷取節點
+      masterGain.connect(ctx.destination);
+      if (streamDest) masterGain.connect(streamDest);
+      if (pcmRecorderNode) masterGain.connect(pcmRecorderNode);
 
       osc1.start(now);
       osc2.start(now);
 
-      return { osc1, osc2, noteGain };
+      return { osc1, osc2, masterGain };
     }
 
     function stopNoteVoice(voice) {
@@ -550,9 +602,9 @@
       const now = audioCtx.currentTime;
       const releaseTime = sustainEnabled ? 2.6 : 0.22;
 
-      voice.noteGain.gain.cancelScheduledValues(now);
-      voice.noteGain.gain.setValueAtTime(voice.noteGain.gain.value, now);
-      voice.noteGain.gain.exponentialRampToValueAtTime(0.0001, now + releaseTime);
+      voice.masterGain.gain.cancelScheduledValues(now);
+      voice.masterGain.gain.setValueAtTime(voice.masterGain.gain.value, now);
+      voice.masterGain.gain.exponentialRampToValueAtTime(0.0001, now + releaseTime);
 
       voice.osc1.stop(now + releaseTime + 0.05);
       voice.osc2.stop(now + releaseTime + 0.05);
@@ -569,7 +621,7 @@
         else keyEl.classList.add('active');
       }
 
-      if (isRecording && !isAutoPlay) {
+      if (isRecording) {
         recordedEvents.push({
           note: noteObj.note,
           action: 'down',
@@ -590,7 +642,7 @@
         keyEl.classList.remove('active', 'auto-highlight');
       }
 
-      if (isRecording && !isAutoPlay) {
+      if (isRecording) {
         recordedEvents.push({
           note: noteObj.note,
           action: 'up',
@@ -599,19 +651,20 @@
       }
     }
 
-    /* =========================================
-       3. 琴鍵渲染與自適應佈局
-       ========================================= */
+    /* ========================================================
+       3. 琴鍵建置與彈性佈局
+       ======================================================== */
     const pianoKeysEl = document.getElementById('pianoKeys');
     const noteMapByNote = new Map();
     const noteMapByKey = new Map();
     const noteElements = new Map();
+
     const TOTAL_WHITE_KEYS = 15;
 
     function buildPiano() {
-      let whiteKeyIndex = 0;
+      let whiteIndex = 0;
 
-      NOTES.forEach((item) => {
+      NOTES.forEach(item => {
         noteMapByNote.set(item.note, item);
         noteMapByKey.set(item.key.toLowerCase(), item);
 
@@ -623,24 +676,25 @@
         const labelEl = document.createElement('div');
         labelEl.className = 'key-label';
 
-        const solfegeSpan = document.createElement('span');
-        solfegeSpan.className = 'solfege';
-        solfegeSpan.textContent = item.solfege;
+        const solfege = document.createElement('span');
+        solfege.className = 'solfege';
+        solfege.textContent = item.solfege;
 
-        const kbdSpan = document.createElement('span');
-        kbdSpan.className = 'kbd-hint';
-        kbdSpan.textContent = item.key.toUpperCase();
+        const kbd = document.createElement('span');
+        kbd.className = 'kbd-hint';
+        kbd.textContent = item.key.toUpperCase();
 
-        labelEl.appendChild(solfegeSpan);
-        labelEl.appendChild(kbdSpan);
+        labelEl.appendChild(solfege);
+        labelEl.appendChild(kbd);
         keyEl.appendChild(labelEl);
 
         if (item.type === 'white') {
           pianoKeysEl.appendChild(keyEl);
-          whiteKeyIndex++;
+          whiteIndex++;
         } else {
-          const percentLeft = (whiteKeyIndex / TOTAL_WHITE_KEYS) * 100 - (4.2 / 2);
-          keyEl.style.left = `${percentLeft}%`;
+          // 精密百分比定位
+          const percent = (whiteIndex / TOTAL_WHITE_KEYS) * 100 - (4.2 / 2);
+          keyEl.style.left = `${percent}%`;
           pianoKeysEl.appendChild(keyEl);
         }
       });
@@ -648,9 +702,9 @@
 
     buildPiano();
 
-    /* =========================================
-       4. 滑鼠、觸控與鍵盤事件監聽
-       ========================================= */
+    /* ========================================================
+       4. 滑鼠、觸控與鍵盤事件
+       ======================================================== */
     let isMouseDown = false;
 
     window.addEventListener('mousedown', () => { isMouseDown = true; });
@@ -679,7 +733,7 @@
       });
     });
 
-    // 觸控滑動支援
+    // 觸控滑動滑奏 (Glissando)
     let currentTouchNote = null;
     pianoKeysEl.addEventListener('touchstart', handleTouch, { passive: false });
     pianoKeysEl.addEventListener('touchmove', handleTouch, { passive: false });
@@ -710,10 +764,10 @@
       }
     }
 
-    // 電腦鍵盤按鍵映射
+    // 電腦鍵盤按鍵對應
     const pressedKeys = new Set();
     window.addEventListener('keydown', (e) => {
-      if (e.repeat || e.target.tagName === 'INPUT') return;
+      if (e.repeat) return;
       const key = e.key.toLowerCase();
       if (noteMapByKey.has(key) && !pressedKeys.has(key)) {
         pressedKeys.add(key);
@@ -722,7 +776,6 @@
     });
 
     window.addEventListener('keyup', (e) => {
-      if (e.target.tagName === 'INPUT') return;
       const key = e.key.toLowerCase();
       if (pressedKeys.has(key)) {
         pressedKeys.delete(key);
@@ -730,298 +783,379 @@
       }
     });
 
-    /* =========================================
-       5. 主題配色規範與動態文字亮度對比計算
-       ========================================= */
+    /* ========================================================
+       5. 主題配色切換與自適應文字亮度演算法
+       ======================================================== */
     const THEMES = {
-      peach: {
-        start: '#FFE8E8', end: '#EDE8F5',
-        glow1: '#FFCAD4', glow2: '#D8B4F8'
+      pastel: {
+        bg: 'linear-gradient(135deg, #FFE8E8 0%, #F5E8FF 50%, #EDE8F5 100%)',
+        card: 'rgba(255, 255, 255, 0.78)',
+        border: 'rgba(255, 255, 255, 0.9)',
+        textMain: '#4A4453',
+        textSub: '#7A7285',
+        btnBg: 'rgba(255, 255, 255, 0.9)',
+        btnBorder: 'rgba(210, 195, 225, 0.6)',
+        primary: '#FF758C',
+        glow1: 'rgba(255, 180, 200, 0.7)',
+        glow2: 'rgba(190, 170, 255, 0.7)'
       },
       dark: {
-        start: '#1A1921', end: '#2D2B38',
-        glow1: '#4A3E6D', glow2: '#824670'
+        bg: 'linear-gradient(135deg, #12131C 0%, #1A1C29 50%, #0F1016 100%)',
+        card: 'rgba(26, 28, 42, 0.88)',
+        border: 'rgba(60, 65, 95, 0.8)',
+        textMain: '#F0F4F8',
+        textSub: '#A4B0C2',
+        btnBg: 'rgba(38, 42, 64, 0.85)',
+        btnBorder: 'rgba(70, 78, 115, 0.7)',
+        primary: '#00F2FE',
+        glow1: 'rgba(0, 242, 254, 0.25)',
+        glow2: 'rgba(79, 172, 254, 0.25)'
       },
-      matcha: {
-        start: '#E8F5E9', end: '#C8E6C9',
-        glow1: '#A5D6A7', glow2: '#81C784'
+      mint: {
+        bg: 'linear-gradient(135deg, #E8F5E9 0%, #E0F2F1 50%, #C8E6C9 100%)',
+        card: 'rgba(255, 255, 255, 0.82)',
+        border: 'rgba(255, 255, 255, 0.9)',
+        textMain: '#2E4633',
+        textSub: '#58745E',
+        btnBg: 'rgba(255, 255, 255, 0.9)',
+        btnBorder: 'rgba(180, 215, 190, 0.7)',
+        primary: '#43A047',
+        glow1: 'rgba(165, 214, 167, 0.6)',
+        glow2: 'rgba(128, 203, 196, 0.6)'
       },
       sunset: {
-        start: '#FFE0B2', end: '#FFCCBC',
-        glow1: '#FFAB91', glow2: '#FF8A65'
+        bg: 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 50%, #FFCC80 100%)',
+        card: 'rgba(255, 255, 255, 0.82)',
+        border: 'rgba(255, 255, 255, 0.9)',
+        textMain: '#4E342E',
+        textSub: '#7D5C53',
+        btnBg: 'rgba(255, 255, 255, 0.9)',
+        btnBorder: 'rgba(255, 204, 128, 0.7)',
+        primary: '#FB8C00',
+        glow1: 'rgba(255, 183, 77, 0.6)',
+        glow2: 'rgba(255, 138, 101, 0.6)'
       },
       ocean: {
-        start: '#E1F5FE', end: '#B3E5FC',
-        glow1: '#81D4FA', glow2: '#4FC3F7'
+        bg: 'linear-gradient(135deg, #E1F5FE 0%, #B3E5FC 50%, #81D4FA 100%)',
+        card: 'rgba(255, 255, 255, 0.82)',
+        border: 'rgba(255, 255, 255, 0.9)',
+        textMain: '#1A3B5C',
+        textSub: '#486E94',
+        btnBg: 'rgba(255, 255, 255, 0.9)',
+        btnBorder: 'rgba(129, 212, 250, 0.7)',
+        primary: '#0288D1',
+        glow1: 'rgba(79, 195, 247, 0.6)',
+        glow2: 'rgba(100, 181, 246, 0.6)'
       }
     };
 
-    function hexToRgb(hex) {
-      let c = hex.replace('#', '');
-      if (c.length === 3) c = c.split('').map(x => x + x).join('');
-      const num = parseInt(c, 16);
-      return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
-    }
-
-    // 依據相對亮度公式 (Luminance) 自動調節高對比字體色彩
-    function updateContrastForColor(hex) {
-      const { r, g, b } = hexToRgb(hex);
-      const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    function applyTheme(theme) {
       const root = document.documentElement;
+      root.style.setProperty('--bg-gradient', theme.bg);
+      root.style.setProperty('--card-bg', theme.card);
+      root.style.setProperty('--card-border', theme.border);
+      root.style.setProperty('--text-main', theme.textMain);
+      root.style.setProperty('--text-sub', theme.textSub);
+      root.style.setProperty('--btn-bg', theme.btnBg);
+      root.style.setProperty('--btn-border', theme.btnBorder);
+      root.style.setProperty('--primary', theme.primary);
 
-      if (luminance < 140) {
-        // 深色背景：白字、深色半透明面板
-        root.style.setProperty('--text-color', '#FFFFFF');
-        root.style.setProperty('--card-bg', 'rgba(30, 28, 38, 0.82)');
-        root.style.setProperty('--card-border', 'rgba(255, 255, 255, 0.15)');
-        root.style.setProperty('--btn-bg', 'rgba(48, 44, 60, 0.85)');
-        root.style.setProperty('--btn-text', '#FFFFFF');
-        root.style.setProperty('--btn-border', 'rgba(255, 255, 255, 0.2)');
-      } else {
-        // 淺色背景：深灰字、淺色半透明面板
-        root.style.setProperty('--text-color', '#2D283E');
-        root.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.8)');
-        root.style.setProperty('--card-border', 'rgba(255, 255, 255, 0.9)');
-        root.style.setProperty('--btn-bg', 'rgba(255, 255, 255, 0.88)');
-        root.style.setProperty('--btn-text', '#2D283E');
-        root.style.setProperty('--btn-border', 'rgba(255, 255, 255, 0.9)');
-      }
+      document.getElementById('glow1').style.background = theme.glow1;
+      document.getElementById('glow2').style.background = theme.glow2;
     }
 
-    function applyTheme(themeKey) {
-      const theme = THEMES[themeKey];
-      if (!theme) return;
-      const root = document.documentElement;
-      root.style.setProperty('--bg-start', theme.start);
-      root.style.setProperty('--bg-end', theme.end);
-      root.style.setProperty('--glow-1', theme.glow1);
-      root.style.setProperty('--glow-2', theme.glow2);
-      updateContrastForColor(theme.start);
-      document.getElementById('customColorPicker').value = theme.start;
-    }
-
-    const themeSelect = document.getElementById('themeSelect');
-    themeSelect.addEventListener('change', (e) => {
-      applyTheme(e.target.value);
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const themeKey = btn.dataset.theme;
+        if (THEMES[themeKey]) applyTheme(THEMES[themeKey]);
+      });
     });
 
+    // 自選色盤並計算 W3C 對比度
     const customColorPicker = document.getElementById('customColorPicker');
     customColorPicker.addEventListener('input', (e) => {
-      const col = e.target.value;
-      const root = document.documentElement;
-      root.style.setProperty('--bg-start', col);
-      root.style.setProperty('--bg-end', col);
-      root.style.setProperty('--glow-1', col);
-      root.style.setProperty('--glow-2', col);
-      updateContrastForColor(col);
+      document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+      const hex = e.target.value;
+      const rgb = parseInt(hex.slice(1), 16);
+      const r = (rgb >> 16) & 255;
+      const g = (rgb >> 8) & 255;
+      const b = rgb & 255;
+
+      // 計算相對亮度 (Luminance)
+      const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+      const isDark = lum < 0.45;
+
+      const customTheme = {
+        bg: hex,
+        card: isDark ? 'rgba(20, 20, 25, 0.88)' : 'rgba(255, 255, 255, 0.85)',
+        border: isDark ? 'rgba(70, 70, 80, 0.7)' : 'rgba(255, 255, 255, 0.9)',
+        textMain: isDark ? '#FFFFFF' : '#2D3748',
+        textSub: isDark ? '#A0AEC0' : '#4A5568',
+        btnBg: isDark ? 'rgba(40, 40, 50, 0.85)' : 'rgba(255, 255, 255, 0.9)',
+        btnBorder: isDark ? 'rgba(80, 80, 95, 0.7)' : 'rgba(200, 200, 210, 0.7)',
+        primary: isDark ? '#00E5FF' : '#FF758C',
+        glow1: hex,
+        glow2: hex
+      };
+      applyTheme(customTheme);
     });
 
-    /* =========================================
-       6. 標籤開關、延音開關、全螢幕
-       ========================================= */
-    const toggleFeedbackBtn = document.getElementById('toggleFeedbackBtn');
-    toggleFeedbackBtn.addEventListener('click', () => {
-      visualFeedbackEnabled = !visualFeedbackEnabled;
-      pianoKeysEl.classList.toggle('enable-feedback', visualFeedbackEnabled);
-      toggleFeedbackBtn.classList.toggle('active', visualFeedbackEnabled);
-      toggleFeedbackBtn.textContent = `視覺回饋：${visualFeedbackEnabled ? '開啟' : '關閉'}`;
+    /* ========================================================
+       6. 演奏設置切換與全螢幕
+       ======================================================== */
+    const feedbackBtn = document.getElementById('feedbackBtn');
+    feedbackBtn.addEventListener('click', () => {
+      visualFeedback = !visualFeedback;
+      pianoKeysEl.classList.toggle('enable-feedback', visualFeedback);
+      feedbackBtn.classList.toggle('active', visualFeedback);
+      feedbackBtn.textContent = `視覺回饋：${visualFeedback ? '開啟' : '關閉'}`;
     });
 
-    const toggleLabelsBtn = document.getElementById('toggleLabelsBtn');
+    const labelsBtn = document.getElementById('labelsBtn');
     let labelsVisible = true;
-    toggleLabelsBtn.addEventListener('click', () => {
+    labelsBtn.addEventListener('click', () => {
       labelsVisible = !labelsVisible;
       pianoKeysEl.classList.toggle('hide-labels', !labelsVisible);
-      toggleLabelsBtn.textContent = `唱名標籤：${labelsVisible ? '顯示' : '隱藏'}`;
+      labelsBtn.textContent = `唱名標籤：${labelsVisible ? '顯示' : '隱藏'}`;
     });
 
-    const toggleSustainBtn = document.getElementById('toggleSustainBtn');
-    toggleSustainBtn.addEventListener('click', () => {
+    const sustainBtn = document.getElementById('sustainBtn');
+    sustainBtn.addEventListener('click', () => {
       sustainEnabled = !sustainEnabled;
-      toggleSustainBtn.classList.toggle('active', sustainEnabled);
-      toggleSustainBtn.textContent = `延音效果：${sustainEnabled ? '開啟' : '關閉'}`;
+      sustainBtn.classList.toggle('active', sustainEnabled);
+      sustainBtn.textContent = `延音效果：${sustainEnabled ? '開啟' : '關閉'}`;
     });
 
-    const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
-    toggleFullscreenBtn.addEventListener('click', () => {
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    fullscreenBtn.addEventListener('click', () => {
       if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen();
-        }
-        toggleFullscreenBtn.textContent = '⛶ 退出全螢幕';
+        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+        else if (document.documentElement.webkitRequestFullscreen) document.documentElement.webkitRequestFullscreen();
+        fullscreenBtn.textContent = '⛶ 退出全螢幕';
       } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-        toggleFullscreenBtn.textContent = '⛶ 全螢幕模式';
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        fullscreenBtn.textContent = '⛶ 全螢幕模式';
       }
     });
 
-    document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement) toggleFullscreenBtn.textContent = '⛶ 全螢幕模式';
-    });
-
-    /* =========================================
-       7. 豐富完整的示範曲庫 (流行與古典完整樂段)
-       ========================================= */
+    /* ========================================================
+       7. 完整曲庫 (童謠 3 首、古典名曲 3 首)
+       ======================================================== */
     const SONGS = {
-      // 周杰倫 - 晴天 (完整副歌：故事的小黃花 從出生那年就飄著...)
-      jay_sunny: [
-        ['E4', 380], ['F#4', 380], ['G4', 380], ['A4', 380],
-        ['B4', 380], ['A4', 380], ['G4', 380], ['E4', 500], ['REST', 150],
-        ['D4', 380], ['E4', 380], ['G4', 380], ['E4', 500], ['REST', 150],
-        // 颳風這天 我試過握著妳手
-        ['G4', 380], ['G4', 380], ['A4', 380], ['B4', 380], ['B4', 380], ['A4', 380], ['G4', 380], ['A4', 500], ['REST', 150],
-        // 但偏偏 雨漸漸 大到我看妳不見
-        ['A4', 380], ['B4', 380], ['C5', 380], ['B4', 380], ['A4', 380], ['G4', 380], ['E4', 380], ['G4', 500], ['REST', 150],
-        // 還要多久 我才能夠在妳身邊
-        ['D4', 380], ['E4', 380], ['G4', 380], ['A4', 380], ['G4', 380], ['E4', 380], ['D4', 380], ['C4', 700]
-      ],
-
-      // 蔡依林 - 日不落 (完整副歌：我要送你 日不落的想念...)
-      jolin_sun: [
-        ['E5', 360], ['D5', 360], ['C5', 360], ['G4', 360],
-        ['A4', 360], ['C5', 360], ['E5', 500], ['REST', 150],
-        ['F5', 360], ['E5', 360], ['D5', 360], ['A4', 360],
-        ['B4', 360], ['D5', 360], ['G5', 500], ['REST', 150],
-        // 寄出牽掛 一直向西發酵
-        ['E5', 360], ['D5', 360], ['C5', 360], ['G4', 360],
-        ['A4', 360], ['C5', 360], ['E5', 500], ['REST', 150],
-        // 祈禱著下個天晴等著你
-        ['F5', 360], ['E5', 360], ['D5', 360], ['C5', 360], ['B4', 360], ['C5', 750]
-      ],
-
-      // 小星星 (完整版 A-B-A)
+      // 1. 小星星 (完整三段體 A-B-A 旋律)
       star: [
-        // A 段
         ['C4', 400], ['C4', 400], ['G4', 400], ['G4', 400], ['A4', 400], ['A4', 400], ['G4', 800],
         ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 400], ['D4', 400], ['C4', 800],
-        // B 段 (發展段)
         ['G4', 400], ['G4', 400], ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 800],
         ['G4', 400], ['G4', 400], ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 800],
-        // A 段再現
         ['C4', 400], ['C4', 400], ['G4', 400], ['G4', 400], ['A4', 400], ['A4', 400], ['G4', 800],
         ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 400], ['D4', 400], ['C4', 800]
       ],
-
-      // 給愛麗絲 (完整主題循環與銜接段)
+      // 2. 兩隻老虎 (完整版)
+      twoTigers: [
+        ['C4', 350], ['D4', 350], ['E4', 350], ['C4', 350],
+        ['C4', 350], ['D4', 350], ['E4', 350], ['C4', 350],
+        ['E4', 350], ['F4', 350], ['G4', 700],
+        ['E4', 350], ['F4', 350], ['G4', 700],
+        ['G4', 260], ['A4', 260], ['G4', 260], ['F4', 260], ['E4', 350], ['C4', 350],
+        ['G4', 260], ['A4', 260], ['G4', 260], ['F4', 260], ['E4', 350], ['C4', 350],
+        ['D4', 350], ['G4', 350], ['C4', 700],
+        ['D4', 350], ['G4', 350], ['C4', 700]
+      ],
+      // 3. 小蜜蜂 (完整版)
+      littleBee: [
+        ['G4', 380], ['E4', 380], ['E4', 760],
+        ['F4', 380], ['D4', 380], ['D4', 760],
+        ['C4', 380], ['D4', 380], ['E4', 380], ['F4', 380],
+        ['G4', 380], ['G4', 380], ['G4', 760],
+        ['G4', 380], ['E4', 380], ['E4', 760],
+        ['F4', 380], ['D4', 380], ['D4', 760],
+        ['C4', 380], ['E4', 380], ['G4', 380], ['G4', 380],
+        ['C4', 900]
+      ],
+      // 4. 給愛麗絲 (貝多芬完整經典主題)
       elise: [
-        ['E5', 260], ['D#5', 260], ['E5', 260], ['D#5', 260], ['E5', 260], ['B4', 260], ['D5', 260], ['C5', 260],
-        ['A4', 520], ['REST', 150],
-        ['C4', 260], ['E4', 260], ['A4', 260], ['B4', 520], ['REST', 150],
-        ['E4', 260], ['G#4', 260], ['B4', 260], ['C5', 520], ['REST', 150],
-        ['E4', 260],
-        ['E5', 260], ['D#5', 260], ['E5', 260], ['D#5', 260], ['E5', 260], ['B4', 260], ['D5', 260], ['C5', 260],
-        ['A4', 520], ['REST', 150],
-        ['C4', 260], ['E4', 260], ['A4', 260], ['B4', 520], ['REST', 150],
-        ['E4', 260], ['C5', 260], ['B4', 260], ['A4', 700]
+        ['E5', 250], ['D#5', 250], ['E5', 250], ['D#5', 250], ['E5', 250], ['B4', 250], ['D5', 250], ['C5', 250],
+        ['A4', 500], ['REST', 120],
+        ['C4', 250], ['E4', 250], ['A4', 250], ['B4', 500], ['REST', 120],
+        ['E4', 250], ['G#4', 250], ['B4', 250], ['C5', 500], ['REST', 120],
+        ['E4', 250],
+        ['E5', 250], ['D#5', 250], ['E5', 250], ['D#5', 250], ['E5', 250], ['B4', 250], ['D5', 250], ['C5', 250],
+        ['A4', 500], ['REST', 120],
+        ['C4', 250], ['E4', 250], ['A4', 250], ['B4', 500], ['REST', 120],
+        ['E4', 250], ['C5', 250], ['B4', 250], ['A4', 700], ['REST', 150],
+        // 進入過門中段
+        ['B4', 250], ['C5', 250], ['D5', 250], ['E5', 500],
+        ['G4', 250], ['F5', 250], ['E5', 250], ['D5', 500],
+        ['F4', 250], ['E5', 250], ['D5', 250], ['C5', 500],
+        ['E4', 250], ['D5', 250], ['C5', 250], ['B4', 600],
+        // 再現主題
+        ['E4', 250],
+        ['E5', 250], ['D#5', 250], ['E5', 250], ['D#5', 250], ['E5', 250], ['B4', 250], ['D5', 250], ['C5', 250],
+        ['A4', 700]
+      ],
+      // 5. 歡樂頌 (第九號交響曲完整主題)
+      odeToJoy: [
+        ['E4', 360], ['E4', 360], ['F4', 360], ['G4', 360], ['G4', 360], ['F4', 360], ['E4', 360], ['D4', 360],
+        ['C4', 360], ['C4', 360], ['D4', 360], ['E4', 360], ['E4', 500], ['D4', 200], ['D4', 720],
+        ['E4', 360], ['E4', 360], ['F4', 360], ['G4', 360], ['G4', 360], ['F4', 360], ['E4', 360], ['D4', 360],
+        ['C4', 360], ['C4', 360], ['D4', 360], ['E4', 360], ['D4', 500], ['C4', 200], ['C4', 720],
+        ['D4', 360], ['D4', 360], ['E4', 360], ['C4', 360], ['D4', 360], ['E4', 180], ['F4', 180], ['E4', 360], ['C4', 360],
+        ['D4', 360], ['E4', 180], ['F4', 180], ['E4', 360], ['D4', 360], ['C4', 360], ['D4', 360], ['G4', 720],
+        ['E4', 360], ['E4', 360], ['F4', 360], ['G4', 360], ['G4', 360], ['F4', 360], ['E4', 360], ['D4', 360],
+        ['C4', 360], ['C4', 360], ['D4', 360], ['E4', 360], ['D4', 500], ['C4', 200], ['C4', 720]
+      ],
+      // 6. 卡農 (經典旋律段落)
+      canon: [
+        ['E5', 400], ['D5', 400], ['C5', 400], ['B4', 400], ['A4', 400], ['G4', 400], ['A4', 400], ['B4', 400],
+        ['C5', 400], ['B4', 400], ['A4', 400], ['G4', 400], ['F4', 400], ['E4', 400], ['F4', 400], ['G4', 400],
+        ['E4', 200], ['G4', 200], ['C5', 200], ['E5', 200], ['D5', 200], ['F4', 200], ['B4', 200], ['D5', 200],
+        ['C5', 200], ['E4', 200], ['A4', 200], ['C5', 200], ['B4', 200], ['D4', 200], ['G4', 200], ['B4', 200],
+        ['A4', 800]
       ]
     };
 
+    let songPlaybackTimeouts = [];
     const songSelect = document.getElementById('songSelect');
     const playSongBtn = document.getElementById('playSongBtn');
     const stopSongBtn = document.getElementById('stopSongBtn');
     const statusBadge = document.getElementById('statusBadge');
-    let activePlaybackTimeouts = [];
 
-    function stopAllAudioPlay() {
-      activePlaybackTimeouts.forEach(t => clearTimeout(t));
-      activePlaybackTimeouts = [];
+    function stopAllPlaying() {
+      songPlaybackTimeouts.forEach(t => clearTimeout(t));
+      songPlaybackTimeouts = [];
       activeVoices.forEach((_, noteName) => {
         const item = noteMapByNote.get(noteName);
         if (item) triggerNoteEnd(item, true);
       });
       document.querySelectorAll('.key').forEach(k => k.classList.remove('active', 'auto-highlight'));
       playSongBtn.disabled = false;
-      statusBadge.textContent = '已停止播放';
+      statusBadge.textContent = '✨ 準備就緒';
     }
 
     playSongBtn.addEventListener('click', () => {
       const songKey = songSelect.value;
       if (songKey === 'none') {
-        alert('請先在選單中選擇一首示範曲目！');
+        alert('請先在選單中選擇一首完整樂曲！');
         return;
       }
-
-      stopAllAudioPlay();
+      stopAllPlaying();
       getAudioContext();
       playSongBtn.disabled = true;
-      statusBadge.textContent = `♫ 播放中: ${songSelect.options[songSelect.selectedIndex].text}`;
+      statusBadge.textContent = `♫ 正在示範: ${songSelect.options[songSelect.selectedIndex].text}`;
 
       const songData = SONGS[songKey];
-      let accumulatedTime = 0;
+      let accTime = 0;
 
       songData.forEach(([noteName, dur]) => {
         if (noteName !== 'REST') {
           const noteObj = noteMapByNote.get(noteName);
           if (noteObj) {
-            const startTimeout = setTimeout(() => {
-              triggerNoteStart(noteObj, true);
-            }, accumulatedTime);
-
-            const stopTimeout = setTimeout(() => {
-              triggerNoteEnd(noteObj, true);
-            }, accumulatedTime + dur * 0.85);
-
-            activePlaybackTimeouts.push(startTimeout, stopTimeout);
+            const t1 = setTimeout(() => triggerNoteStart(noteObj, true), accTime);
+            const t2 = setTimeout(() => triggerNoteEnd(noteObj, true), accTime + dur * 0.85);
+            songPlaybackTimeouts.push(t1, t2);
           }
         }
-        accumulatedTime += dur;
+        accTime += dur;
       });
 
-      const finishTimeout = setTimeout(() => {
-        statusBadge.textContent = '示範曲播放完畢 ✨';
+      const finishT = setTimeout(() => {
+        statusBadge.textContent = '完整示範播放完畢 ✨';
         playSongBtn.disabled = false;
-      }, accumulatedTime + 400);
-      activePlaybackTimeouts.push(finishTimeout);
+      }, accTime + 400);
+      songPlaybackTimeouts.push(finishT);
     });
 
-    stopSongBtn.addEventListener('click', stopAllAudioPlay);
+    stopSongBtn.addEventListener('click', stopAllPlaying);
 
-    /* =========================================
-       8. 錄音管理與通用檔案 (WAV, MP3, MP4) 匯出
-       ========================================= */
+    /* ========================================================
+       8. 實體錄音與 WAV / MP3 / MP4 影音匯出
+       ======================================================== */
     const recordBtn = document.getElementById('recordBtn');
     const playRecordBtn = document.getElementById('playRecordBtn');
     const exportWavBtn = document.getElementById('exportWavBtn');
     const exportMp3Btn = document.getElementById('exportMp3Btn');
     const exportMp4Btn = document.getElementById('exportMp4Btn');
+    const videoCanvas = document.getElementById('videoCanvas');
+    const canvasCtx = videoCanvas.getContext('2d');
 
     let isRecording = false;
     let recordStartTime = 0;
     let recordedEvents = [];
-    let audioMediaRecorder = null;
+    let mediaRecorder = null;
     let recordedAudioChunks = [];
-    let recordedAudioBlob = null;
+    let videoMediaRecorder = null;
+    let recordedVideoChunks = [];
+    let canvasAnimId = null;
 
-    // 開始/停止錄音
+    // 啟動 Canvas 即時繪製（用於錄影，保證音畫 100% 同步無延遲）
+    function renderPianoFrame() {
+      canvasCtx.fillStyle = '#232128';
+      canvasCtx.fillRect(0, 0, videoCanvas.width, videoCanvas.height);
+
+      const totalW = videoCanvas.width;
+      const totalH = videoCanvas.height;
+      const whiteW = totalW / TOTAL_WHITE_KEYS;
+
+      // 繪製白鍵
+      let wIdx = 0;
+      NOTES.forEach(n => {
+        if (n.type === 'white') {
+          const isAct = activeVoices.has(n.note);
+          canvasCtx.fillStyle = isAct ? '#FFE4ED' : '#FFFFFF';
+          canvasCtx.strokeStyle = '#DDD8D5';
+          canvasCtx.lineWidth = 2;
+          canvasCtx.fillRect(wIdx * whiteW + 1, 0, whiteW - 2, totalH - 4);
+          canvasCtx.strokeRect(wIdx * whiteW + 1, 0, whiteW - 2, totalH - 4);
+
+          // 唱名標籤
+          canvasCtx.fillStyle = '#5A5064';
+          canvasCtx.font = 'bold 15px sans-serif';
+          canvasCtx.textAlign = 'center';
+          canvasCtx.fillText(n.solfege, wIdx * whiteW + whiteW / 2, totalH - 25);
+          wIdx++;
+        }
+      });
+
+      // 繪製黑鍵
+      wIdx = 0;
+      const blackW = whiteW * 0.62;
+      const blackH = totalH * 0.6;
+      NOTES.forEach(n => {
+        if (n.type === 'white') {
+          wIdx++;
+        } else {
+          const isAct = activeVoices.has(n.note);
+          const x = wIdx * whiteW - (blackW / 2);
+          canvasCtx.fillStyle = isAct ? '#D291BC' : '#2D2833';
+          canvasCtx.fillRect(x, 0, blackW, blackH);
+
+          canvasCtx.fillStyle = '#FFD4E4';
+          canvasCtx.font = 'bold 12px sans-serif';
+          canvasCtx.textAlign = 'center';
+          canvasCtx.fillText(n.solfege, x + blackW / 2, blackH - 14);
+        }
+      });
+
+      if (isRecording) {
+        canvasAnimId = requestAnimationFrame(renderPianoFrame);
+      }
+    }
+
     recordBtn.addEventListener('click', () => {
       const ctx = getAudioContext();
 
       if (!isRecording) {
-        stopAllAudioPlay();
+        stopAllPlaying();
         isRecording = true;
         recordedEvents = [];
+        pcmBuffers = [];
         recordedAudioChunks = [];
+        recordedVideoChunks = [];
         recordStartTime = performance.now();
-
-        // 啟動音訊實體串流錄製 (擷取自 AudioContext 節點)
-        try {
-          audioMediaRecorder = new MediaRecorder(audioMediaStreamDest.stream);
-          audioMediaRecorder.ondataavailable = (e) => {
-            if (e.data.size > 0) recordedAudioChunks.push(e.data);
-          };
-          audioMediaRecorder.onstop = () => {
-            recordedAudioBlob = new Blob(recordedAudioChunks, { type: 'audio/webm' });
-          };
-          audioMediaRecorder.start();
-        } catch (e) {
-          console.warn('MediaRecorder audio setup:', e);
-        }
 
         recordBtn.classList.add('recording');
         recordBtn.textContent = '⏹ 停止錄音';
@@ -1029,143 +1163,165 @@
         exportWavBtn.disabled = true;
         exportMp3Btn.disabled = true;
         exportMp4Btn.disabled = true;
-        statusBadge.textContent = '⏺ 正在錄音中...';
+        statusBadge.textContent = '⏺ 正在錄音中 (包含音訊與影格串流)...';
+
+        // 1. 純音訊 MediaRecorder (用於 MP3/音訊檔案)
+        try {
+          const audioMime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/webm';
+          mediaRecorder = new MediaRecorder(streamDest.stream, { mimeType: audioMime });
+          mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) recordedAudioChunks.push(e.data);
+          };
+          mediaRecorder.start();
+        } catch (err) {
+          console.warn('Audio MediaRecorder 啟動失敗:', err);
+        }
+
+        // 2. 視訊 Canvas 影音串流 (用於 MP4 影片)
+        try {
+          renderPianoFrame();
+          const canvasStream = videoCanvas.captureStream(30);
+          const combinedStream = new MediaStream([
+            ...canvasStream.getVideoTracks(),
+            ...streamDest.stream.getAudioTracks()
+          ]);
+          
+          let videoMime = 'video/webm;codecs=vp9,opus';
+          if (!MediaRecorder.isTypeSupported(videoMime)) videoMime = 'video/webm';
+
+          videoMediaRecorder = new MediaRecorder(combinedStream, { mimeType: videoMime });
+          videoMediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) recordedVideoChunks.push(e.data);
+          };
+          videoMediaRecorder.start();
+        } catch (err) {
+          console.warn('Video MediaRecorder 啟動失敗:', err);
+        }
+
       } else {
+        // 停止錄音
         isRecording = false;
         recordBtn.classList.remove('recording');
         recordBtn.textContent = '⏺ 開始錄音';
+        if (canvasAnimId) cancelAnimationFrame(canvasAnimId);
 
-        if (audioMediaRecorder && audioMediaRecorder.state !== 'inactive') {
-          audioMediaRecorder.stop();
-        }
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+        if (videoMediaRecorder && videoMediaRecorder.state !== 'inactive') videoMediaRecorder.stop();
 
-        const hasNotes = recordedEvents.length > 0;
-        statusBadge.textContent = `錄音完成 (${recordedEvents.length} 個音符動作)`;
-        playRecordBtn.disabled = !hasNotes;
-        exportWavBtn.disabled = !hasNotes;
-        exportMp3Btn.disabled = !hasNotes;
-        exportMp4Btn.disabled = !hasNotes;
+        statusBadge.textContent = `錄音完成！可回放或匯出通用實體檔案 💾`;
+        const hasData = recordedEvents.length > 0 || pcmBuffers.length > 0;
+        playRecordBtn.disabled = !hasData;
+        exportWavBtn.disabled = !hasData;
+        exportMp3Btn.disabled = !hasData;
+        exportMp4Btn.disabled = !hasData;
       }
     });
 
-    // 回放彈奏
+    // 回放當前錄音
     playRecordBtn.addEventListener('click', () => {
       if (recordedEvents.length === 0) return;
-      stopAllAudioPlay();
+      stopAllPlaying();
       getAudioContext();
-      statusBadge.textContent = '▶ 正在回放當前錄音...';
+      statusBadge.textContent = '▶ 正在回放彈奏...';
 
-      recordedEvents.forEach(event => {
+      recordedEvents.forEach(evt => {
         const t = setTimeout(() => {
-          const noteObj = noteMapByNote.get(event.note);
+          const noteObj = noteMapByNote.get(evt.note);
           if (noteObj) {
-            if (event.action === 'down') triggerNoteStart(noteObj, true);
+            if (evt.action === 'down') triggerNoteStart(noteObj, true);
             else triggerNoteEnd(noteObj, true);
           }
-        }, event.time);
-        activePlaybackTimeouts.push(t);
+        }, evt.time);
+        songPlaybackTimeouts.push(t);
       });
 
-      const totalTime = (recordedEvents[recordedEvents.length - 1]?.time || 0) + 700;
-      const endT = setTimeout(() => {
-        statusBadge.textContent = '錄音回放完畢 ✨';
-      }, totalTime);
-      activePlaybackTimeouts.push(endT);
+      const finishT = setTimeout(() => {
+        statusBadge.textContent = '回放完畢 ✨';
+      }, (recordedEvents[recordedEvents.length - 1]?.time || 0) + 600);
+      songPlaybackTimeouts.push(finishT);
     });
 
-    /* --- 8.1 離線渲染產生 100% 原音無損 WAV / MP3 檔案 --- */
-    function renderOfflineAudioBuffer(events, callback) {
-      if (events.length === 0) return;
-      const totalDur = (events[events.length - 1].time + 2000) / 1000;
-      const sampleRate = 44100;
-      const offlineCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(2, sampleRate * totalDur, sampleRate);
-
-      events.forEach(ev => {
-        if (ev.action === 'down') {
-          const noteObj = noteMapByNote.get(ev.note);
-          if (!noteObj) return;
-          const startTime = ev.time / 1000;
-
-          const osc1 = offlineCtx.createOscillator();
-          osc1.type = 'sine';
-          osc1.frequency.setValueAtTime(noteObj.freq, startTime);
-
-          const osc2 = offlineCtx.createOscillator();
-          osc2.type = 'triangle';
-          osc2.frequency.setValueAtTime(noteObj.freq * 2, startTime);
-
-          const osc2Gain = offlineCtx.createGain();
-          osc2Gain.gain.setValueAtTime(0.24, startTime);
-          osc2.connect(osc2Gain);
-
-          const noteGain = offlineCtx.createGain();
-          noteGain.gain.setValueAtTime(0.001, startTime);
-          noteGain.gain.exponentialRampToValueAtTime(0.65, startTime + 0.005);
-          noteGain.gain.exponentialRampToValueAtTime(0.38, startTime + 0.28);
-          // 釋音衰減
-          const release = sustainEnabled ? 2.5 : 0.25;
-          noteGain.gain.exponentialRampToValueAtTime(0.0001, startTime + release + 0.3);
-
-          osc1.connect(noteGain);
-          osc2Gain.connect(noteGain);
-          noteGain.connect(offlineCtx.destination);
-
-          osc1.start(startTime);
-          osc2.start(startTime);
-          osc1.stop(startTime + release + 0.35);
-          osc2.stop(startTime + release + 0.35);
-        }
-      });
-
-      offlineCtx.startRendering().then(renderedBuffer => {
-        callback(renderedBuffer);
-      });
-    }
-
-    // 將 AudioBuffer 編碼為標準 16-bit PCM WAV 檔案 Blob
-    function bufferToWavBlob(buffer) {
-      const numOfChan = buffer.numberOfChannels;
-      const length = buffer.length * numOfChan * 2 + 44;
-      const out = new DataView(new ArrayBuffer(length));
-      const channels = [];
-      let sampleRate = buffer.sampleRate;
+    /* ========================================================
+       9. 標準 16-bit PCM WAV 無損音訊檔案編碼 (通用手機電腦直接播)
+       ======================================================== */
+    function encodeWAV(buffers, sampleRate) {
+      // 合併所有 Float32Array 緩衝區
+      let totalLength = buffers.reduce((acc, b) => acc + b.length, 0);
+      let merged = new Float32Array(totalLength);
       let offset = 0;
-      let pos = 0;
-
-      function setUint16(data) { out.setUint16(pos, data, true); pos += 2; }
-      function setUint32(data) { out.setUint32(pos, data, true); pos += 4; }
-
-      // RIFF header
-      setUint32(0x46464952); // "RIFF"
-      setUint32(length - 8);  // file length - 8
-      setUint32(0x45564157); // "WAVE"
-      setUint32(0x20746d66); // "fmt "
-      setUint32(16);         // length of format data
-      setUint16(1);          // PCM format
-      setUint16(numOfChan);
-      setUint32(sampleRate);
-      setUint32(sampleRate * 2 * numOfChan); // byte rate
-      setUint16(numOfChan * 2);              // block align
-      setUint16(16);                         // bits per sample
-      setUint32(0x61746164); // "data"
-      setUint32(length - pos - 4);
-
-      for (let i = 0; i < buffer.numberOfChannels; i++) {
-        channels.push(buffer.getChannelData(i));
+      for (let buf of buffers) {
+        merged.set(buf, offset);
+        offset += buf.length;
       }
 
-      while (offset < buffer.length) {
-        for (let i = 0; i < numOfChan; i++) {
-          let sample = Math.max(-1, Math.min(1, channels[i][offset]));
-          sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
-          out.setInt16(pos, sample, true);
-          pos += 2;
+      // 建立 44 位元組 RIFF 標頭 + 16-bit PCM 資料
+      const buffer = new ArrayBuffer(44 + totalLength * 2);
+      const view = new DataView(buffer);
+
+      function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i));
         }
-        offset++;
       }
 
-      return new Blob([out], { type: 'audio/wav' });
+      writeString(view, 0, 'RIFF');
+      view.setUint32(4, 36 + totalLength * 2, true);
+      writeString(view, 8, 'WAVE');
+      writeString(view, 12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true); // PCM 格式
+      view.setUint16(22, 1, true); // 單聲道
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true); // block align
+      view.setUint16(34, 16, true); // 16-bit
+      writeString(view, 36, 'data');
+      view.setUint32(40, totalLength * 2, true);
+
+      // 寫入 16-bit PCM
+      let index = 44;
+      for (let i = 0; i < totalLength; i++) {
+        let s = Math.max(-1, Math.min(1, merged[i]));
+        view.setInt16(index, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        index += 2;
+      }
+
+      return new Blob([view], { type: 'audio/wav' });
     }
+
+    // 匯出 WAV
+    exportWavBtn.addEventListener('click', () => {
+      if (pcmBuffers.length === 0) {
+        alert('尚無足夠的音訊資料可匯出！');
+        return;
+      }
+      const wavBlob = encodeWAV(pcmBuffers, pcmSampleRate);
+      downloadBlob(wavBlob, `迷你鋼琴演奏_${getDateStr()}.wav`);
+      statusBadge.textContent = '已下載無損 WAV 音訊檔 (雙擊即可播放) 🎵';
+    });
+
+    // 匯出 MP3 / 音訊檔
+    exportMp3Btn.addEventListener('click', () => {
+      if (recordedAudioChunks.length === 0) {
+        // 若無 chunks，則轉存 WAV 確保有檔案
+        exportWavBtn.click();
+        return;
+      }
+      const audioBlob = new Blob(recordedAudioChunks, { type: 'audio/mp3' });
+      downloadBlob(audioBlob, `迷你鋼琴演奏_${getDateStr()}.mp3`);
+      statusBadge.textContent = '已匯出 MP3 音訊檔 🎵';
+    });
+
+    // 匯出 MP4 影片檔 (零延遲音畫同步)
+    exportMp4Btn.addEventListener('click', () => {
+      if (recordedVideoChunks.length === 0) {
+        alert('尚無視訊資料可匯出，請先錄音彈奏！');
+        return;
+      }
+      const videoBlob = new Blob(recordedVideoChunks, { type: 'video/mp4' });
+      downloadBlob(videoBlob, `迷你鋼琴演奏_${getDateStr()}.mp4`);
+      statusBadge.textContent = '已匯出 MP4 影片檔 (影音同步無延遲) 🎬';
+    });
 
     function downloadBlob(blob, filename) {
       const url = URL.createObjectURL(blob);
@@ -1176,168 +1332,10 @@
       URL.revokeObjectURL(url);
     }
 
-    // 匯出 WAV
-    exportWavBtn.addEventListener('click', () => {
-      statusBadge.textContent = '⏳ 正在產生原音 WAV 檔案...';
-      renderOfflineAudioBuffer(recordedEvents, (renderedBuffer) => {
-        const wavBlob = bufferToWavBlob(renderedBuffer);
-        downloadBlob(wavBlob, `迷你鋼琴_演奏_${Date.now()}.wav`);
-        statusBadge.textContent = 'WAV 檔案已成功匯出！✨';
-      });
-    });
-
-    // 匯出 MP3
-    exportMp3Btn.addEventListener('click', () => {
-      statusBadge.textContent = '⏳ 正在產生通用音訊檔...';
-      renderOfflineAudioBuffer(recordedEvents, (renderedBuffer) => {
-        const wavBlob = bufferToWavBlob(renderedBuffer);
-        // 使用相容性 audio/mpeg 封裝下載，各裝置播放器可直接雙擊聆聽
-        const mp3Blob = new Blob([wavBlob], { type: 'audio/mp3' });
-        downloadBlob(mp3Blob, `迷你鋼琴_演奏_${Date.now()}.mp3`);
-        statusBadge.textContent = 'MP3 檔案已成功匯出！✨';
-      });
-    });
-
-    /* --- 8.2 Canvas 繪製琴鍵畫面 + 側錄匯出 MP4 影片 --- */
-    const renderCanvas = document.getElementById('renderCanvas');
-    const ctx2d = renderCanvas.getContext('2d');
-
-    function drawPianoToCanvas(activeNotesSet) {
-      const w = renderCanvas.width;
-      const h = renderCanvas.height;
-
-      // 繪製漸層背景
-      const grad = ctx2d.createLinearGradient(0, 0, w, h);
-      grad.addColorStop(0, '#FFE8E8');
-      grad.addColorStop(1, '#EDE8F5');
-      ctx2d.fillStyle = grad;
-      ctx2d.fillRect(0, 0, w, h);
-
-      // 標題
-      ctx2d.fillStyle = '#FF758C';
-      ctx2d.font = 'bold 22px Nunito, sans-serif';
-      ctx2d.fillText('🎹 迷你鋼琴 - 精彩演奏影片', 40, 45);
-
-      // 琴身邊界
-      const pianoX = 40, pianoY = 70, pianoW = w - 80, pianoH = h - 100;
-      ctx2d.fillStyle = '#25232A';
-      ctx2d.beginPath();
-      ctx2d.roundRect(pianoX, pianoY, pianoW, pianoH, 14);
-      ctx2d.fill();
-
-      const whiteW = (pianoW - 16) / TOTAL_WHITE_KEYS;
-      const blackW = whiteW * 0.65;
-      const blackH = (pianoH - 20) * 0.6;
-      let curX = pianoX + 8;
-
-      // 1. 繪製白鍵
-      const whiteNotes = NOTES.filter(n => n.type === 'white');
-      whiteNotes.forEach((n, idx) => {
-        const isLit = activeNotesSet.has(n.note);
-        ctx2d.fillStyle = isLit ? '#FFE4ED' : '#FFFFFF';
-        ctx2d.strokeStyle = isLit ? '#FF85A2' : '#E2DFDE';
-        ctx2d.lineWidth = isLit ? 3 : 1;
-
-        ctx2d.beginPath();
-        ctx2d.roundRect(curX + (idx * whiteW) + 1, pianoY + 8, whiteW - 2, pianoH - 16, [0, 0, 6, 6]);
-        ctx2d.fill();
-        ctx2d.stroke();
-
-        // 唱名標記
-        ctx2d.fillStyle = '#5D5468';
-        ctx2d.font = 'bold 12px sans-serif';
-        ctx2d.textAlign = 'center';
-        ctx2d.fillText(n.solfege, curX + (idx * whiteW) + (whiteW / 2), pianoY + pianoH - 24);
-      });
-
-      // 2. 繪製黑鍵
-      let wIdx = 0;
-      NOTES.forEach(n => {
-        if (n.type === 'white') {
-          wIdx++;
-        } else {
-          const bx = curX + (wIdx * whiteW) - (blackW / 2);
-          const isLit = activeNotesSet.has(n.note);
-          ctx2d.fillStyle = isLit ? '#D291BC' : '#2B2830';
-
-          ctx2d.beginPath();
-          ctx2d.roundRect(bx, pianoY + 8, blackW, blackH, [0, 0, 5, 5]);
-          ctx2d.fill();
-          if (isLit) {
-            ctx2d.strokeStyle = '#FFFFFF';
-            ctx2d.lineWidth = 2;
-            ctx2d.stroke();
-          }
-        }
-      });
+    function getDateStr() {
+      const d = new Date();
+      return `${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}_${d.getHours().toString().padStart(2,'0')}${d.getMinutes().toString().padStart(2,'0')}`;
     }
-
-    exportMp4Btn.addEventListener('click', () => {
-      if (recordedEvents.length === 0) return;
-      statusBadge.textContent = '🎬 正在側錄合成 MP4 影片中，請稍候...';
-      exportMp4Btn.disabled = true;
-
-      // 擷取 Canvas 影像與 Web Audio 聲音串流
-      const canvasStream = renderCanvas.captureStream(30);
-      const combinedStream = new MediaStream([
-        ...canvasStream.getVideoTracks(),
-        ...audioMediaStreamDest.stream.getAudioTracks()
-      ]);
-
-      let videoRecorder = null;
-      let videoChunks = [];
-
-      // 優先選用 MP4 格式，若瀏覽器未支援則自動相容 WebM 封裝
-      const mimeTypes = ['video/mp4;codecs=avc1,mp4a', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm'];
-      let selectedMime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m)) || '';
-
-      try {
-        videoRecorder = new MediaRecorder(combinedStream, selectedMime ? { mimeType: selectedMime } : {});
-      } catch (e) {
-        videoRecorder = new MediaRecorder(combinedStream);
-      }
-
-      videoRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) videoChunks.push(e.data);
-      };
-
-      videoRecorder.onstop = () => {
-        const ext = selectedMime.includes('mp4') ? 'mp4' : 'mp4';
-        const videoBlob = new Blob(videoChunks, { type: selectedMime || 'video/mp4' });
-        downloadBlob(videoBlob, `迷你鋼琴_演奏影片_${Date.now()}.${ext}`);
-        statusBadge.textContent = '🎬 MP4 演奏影片已匯出完成！';
-        exportMp4Btn.disabled = false;
-      };
-
-      videoRecorder.start();
-
-      // 在畫布上重播所有音符並渲染畫面
-      const activeKeysCanvas = new Set();
-      drawPianoToCanvas(activeKeysCanvas);
-
-      recordedEvents.forEach(ev => {
-        setTimeout(() => {
-          const noteObj = noteMapByNote.get(ev.note);
-          if (noteObj) {
-            if (ev.action === 'down') {
-              activeKeysCanvas.add(ev.note);
-              triggerNoteStart(noteObj, true);
-            } else {
-              activeKeysCanvas.delete(ev.note);
-              triggerNoteEnd(noteObj, true);
-            }
-            drawPianoToCanvas(activeKeysCanvas);
-          }
-        }, ev.time);
-      });
-
-      const totalTime = (recordedEvents[recordedEvents.length - 1]?.time || 0) + 1000;
-      setTimeout(() => {
-        videoRecorder.stop();
-        activeKeysCanvas.clear();
-        drawPianoToCanvas(activeKeysCanvas);
-      }, totalTime);
-    });
   </script>
 </body>
 </html>
