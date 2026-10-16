@@ -2,12 +2,12 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>迷你鋼琴</title>
   <style>
     :root {
       --bg-gradient: linear-gradient(135deg, #FFE8E8 0%, #F5E8FF 50%, #EDE8F5 100%);
-      --card-bg: rgba(255, 255, 255, 0.78);
+      --card-bg: rgba(255, 255, 255, 0.82);
       --card-border: rgba(255, 255, 255, 0.9);
       --text-main: #4A4453;
       --text-sub: #7A7285;
@@ -32,74 +32,79 @@
       -webkit-user-select: none;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 10px;
       background: var(--bg-gradient);
       background-attachment: fixed;
       color: var(--text-main);
       transition: background 0.4s ease, color 0.3s ease;
       position: relative;
       overflow-x: hidden;
+      touch-action: manipulation;
     }
 
     /* 頂部裝飾柔光球 */
     .glow-sphere {
       position: fixed;
       border-radius: 50%;
-      filter: blur(90px);
+      filter: blur(80px);
       z-index: 0;
       pointer-events: none;
       opacity: 0.55;
     }
     .glow-1 {
-      width: 480px;
-      height: 480px;
+      width: 400px;
+      height: 400px;
       background: rgba(255, 180, 200, 0.7);
-      top: -120px;
-      left: -120px;
+      top: -100px;
+      left: -100px;
     }
     .glow-2 {
-      width: 520px;
-      height: 520px;
+      width: 450px;
+      height: 450px;
       background: rgba(190, 170, 255, 0.7);
-      bottom: -140px;
-      right: -140px;
+      bottom: -120px;
+      right: -120px;
     }
 
-    /* 主應用卡片容器 */
+    /* 主卡片容器：跨裝置彈性適應 */
     .piano-app {
       position: relative;
       z-index: 1;
-      width: 98vw;
+      width: 100%;
       max-width: 1350px;
       background: var(--card-bg);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--card-border);
-      border-radius: 26px;
+      border-radius: 22px;
       box-shadow: var(--shadow-card);
-      padding: 20px 26px;
+      padding: 16px 20px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
       transition: all 0.3s ease;
     }
 
+    /* 全螢幕模式 */
     :fullscreen .piano-app,
     :-webkit-full-screen .piano-app {
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       max-width: none;
       border-radius: 0;
-      padding: 16px 24px;
+      padding: 12px 16px;
       justify-content: space-between;
     }
 
@@ -107,41 +112,43 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 12px;
+      padding-bottom: 8px;
       border-bottom: 2px dashed rgba(180, 170, 200, 0.35);
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .title-area {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     h1 {
-      font-size: 1.65rem;
+      font-size: 1.45rem;
       font-weight: 800;
       letter-spacing: 0.5px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .status-badge {
-      font-size: 0.82rem;
-      background: rgba(255, 255, 255, 0.7);
+      font-size: 0.78rem;
+      background: rgba(255, 255, 255, 0.75);
       color: var(--text-main);
       border: 1px solid var(--btn-border);
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 20px;
       font-weight: 700;
       transition: all 0.2s ease;
     }
 
-    /* 控制面板設計 */
+    /* 控制面板 */
     .toolbar {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .toolbar-row {
@@ -149,7 +156,7 @@
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .btn-group {
@@ -160,31 +167,32 @@
     }
 
     .group-label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 800;
-      margin-right: 4px;
+      margin-right: 2px;
       color: var(--text-sub);
     }
 
     button, select {
       font-family: inherit;
-      font-size: 0.83rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      padding: 7px 14px;
-      border-radius: 20px;
+      padding: 6px 12px;
+      border-radius: 18px;
       border: 1px solid var(--btn-border);
       cursor: pointer;
       outline: none;
       transition: all 0.2s cubic-bezier(0.2, 0.8, 0.3, 1);
       background: var(--btn-bg);
       color: var(--text-main);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+      white-space: nowrap;
     }
 
     button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-      filter: brightness(1.03);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      filter: brightness(1.02);
     }
 
     button:active:not(:disabled) {
@@ -212,31 +220,28 @@
 
     @keyframes recPulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.05); box-shadow: 0 0 16px rgba(255, 51, 102, 0.8); }
+      50% { transform: scale(1.05); box-shadow: 0 0 14px rgba(255, 51, 102, 0.8); }
       100% { transform: scale(1); }
-    }
-
-    .theme-btn {
-      padding: 5px 11px;
-      font-size: 0.8rem;
     }
 
     .color-picker-wrap {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       background: var(--btn-bg);
       border: 1px solid var(--btn-border);
-      padding: 3px 10px;
-      border-radius: 20px;
+      padding: 3px 8px;
+      border-radius: 18px;
       cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 700;
     }
 
     input[type="color"] {
       -webkit-appearance: none;
       border: none;
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       cursor: pointer;
       background: none;
@@ -249,35 +254,52 @@
       border-radius: 50%;
     }
 
-    /* 鋼琴自適應容器 */
+    /* 鋼琴自適應容器與滾動條優化 */
     .piano-box {
       width: 100%;
       background: #232128;
-      border-radius: 20px;
-      padding: 10px 12px 14px 12px;
-      box-shadow: 0 14px 38px rgba(25, 20, 35, 0.35);
+      border-radius: 18px;
+      padding: 8px 10px 12px 10px;
+      box-shadow: 0 12px 34px rgba(25, 20, 35, 0.35);
       position: relative;
-      display: flex;
-      justify-content: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 117, 140, 0.5) transparent;
+      touch-action: pan-x;
+    }
+
+    .piano-box::-webkit-scrollbar {
+      height: 6px;
+    }
+    .piano-box::-webkit-scrollbar-thumb {
+      background: rgba(255, 117, 140, 0.5);
+      border-radius: 4px;
     }
 
     :fullscreen .piano-box,
     :-webkit-full-screen .piano-box {
       flex: 1;
       height: 100%;
-      min-height: 400px;
+      min-height: 260px;
+      display: flex;
+      align-items: stretch;
     }
 
     .piano-keys {
       position: relative;
       display: flex;
       width: 100%;
-      height: 280px;
+      min-width: 780px; /* 手機端確保鍵位有舒適可按寬度，可平滑橫向滾動 */
+      height: 260px;
+      touch-action: none;
     }
 
     :fullscreen .piano-keys,
     :-webkit-full-screen .piano-keys {
       height: 100%;
+      min-width: 100%;
     }
 
     .key {
@@ -286,9 +308,10 @@
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
-      padding-bottom: 12px;
+      padding-bottom: 10px;
       cursor: pointer;
       transition: background 0.08s ease, transform 0.08s ease, box-shadow 0.08s ease;
+      touch-action: none;
     }
 
     .white-key {
@@ -296,10 +319,10 @@
       height: 100%;
       background: var(--white-key-bg);
       border: 1px solid var(--white-key-border);
-      border-radius: 0 0 9px 9px;
-      margin: 0 1.2px;
+      border-radius: 0 0 8px 8px;
+      margin: 0 1px;
       z-index: 1;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08);
     }
 
     .black-key {
@@ -307,28 +330,28 @@
       width: 4.2%;
       height: 60%;
       background: var(--black-key-bg);
-      border-radius: 0 0 7px 7px;
+      border-radius: 0 0 6px 6px;
       z-index: 2;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
     }
 
     .key-label {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
+      gap: 2px;
       pointer-events: none;
     }
 
     .solfege {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 800;
     }
 
     .kbd-hint {
-      font-size: 0.7rem;
+      font-size: 0.66rem;
       font-weight: 700;
-      padding: 2px 4px;
+      padding: 1px 4px;
       border-radius: 4px;
     }
 
@@ -345,16 +368,16 @@
     .enable-feedback .white-key.active,
     .white-key.auto-highlight {
       background: linear-gradient(to bottom, #FFFFFF 20%, var(--highlight-white) 100%) !important;
-      transform: translateY(4px);
+      transform: translateY(3px);
       border-color: var(--highlight-white-border) !important;
-      box-shadow: 0 2px 16px var(--key-glow-white), inset 0 -3px 8px var(--key-glow-white) !important;
+      box-shadow: 0 2px 14px var(--key-glow-white), inset 0 -3px 8px var(--key-glow-white) !important;
     }
 
     .enable-feedback .black-key.active,
     .black-key.auto-highlight {
       background: linear-gradient(to bottom, #3E3848 0%, var(--highlight-black) 100%) !important;
-      transform: translateY(3px);
-      box-shadow: 0 0 18px var(--key-glow-black), 0 3px 6px rgba(0,0,0,0.45) !important;
+      transform: translateY(2px);
+      box-shadow: 0 0 16px var(--key-glow-black), 0 3px 6px rgba(0,0,0,0.45) !important;
     }
 
     #videoCanvas {
@@ -365,20 +388,55 @@
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 10px;
-      font-size: 0.82rem;
+      gap: 8px;
+      font-size: 0.78rem;
       color: var(--text-sub);
       border-top: 1px dashed rgba(180, 170, 200, 0.35);
-      padding-top: 10px;
+      padding-top: 8px;
     }
 
     .kbd-tag {
       background: rgba(255, 255, 255, 0.7);
-      padding: 1px 6px;
+      padding: 1px 5px;
       border-radius: 4px;
       font-family: monospace;
       font-weight: 700;
       border: 1px solid var(--btn-border);
+    }
+
+    /* 行動裝置 / 直向螢幕專屬優化 (RWD) */
+    @media (max-width: 768px) {
+      body {
+        padding: 6px;
+      }
+      .piano-app {
+        padding: 12px 14px;
+        border-radius: 16px;
+        gap: 10px;
+      }
+      h1 {
+        font-size: 1.25rem;
+      }
+      .status-badge {
+        font-size: 0.72rem;
+      }
+      button, select {
+        font-size: 0.74rem;
+        padding: 5px 9px;
+      }
+      .piano-keys {
+        height: 210px;
+      }
+      .mobile-hint {
+        display: block !important;
+      }
+    }
+
+    .mobile-hint {
+      display: none;
+      font-size: 0.72rem;
+      color: #E26488;
+      font-weight: 700;
     }
   </style>
 </head>
@@ -387,7 +445,7 @@
   <div class="glow-sphere glow-1" id="glow1"></div>
   <div class="glow-sphere glow-2" id="glow2"></div>
 
-  <!-- 用於錄影渲染影格的離屏 Canvas -->
+  <!-- 錄影離屏 Canvas -->
   <canvas id="videoCanvas" width="960" height="320"></canvas>
 
   <div class="piano-app" id="pianoApp">
@@ -395,6 +453,7 @@
       <div class="title-area">
         <h1>🎹 迷你鋼琴</h1>
         <div id="statusBadge" class="status-badge">✨ 準備就緒</div>
+        <div class="mobile-hint">📱 手機建議橫向螢幕或左右滑動鍵盤彈奏</div>
       </div>
       <div class="btn-group">
         <button id="fullscreenBtn">⛶ 全螢幕模式</button>
@@ -406,25 +465,25 @@
       <div class="toolbar-row">
         <div class="btn-group">
           <span class="group-label">主題配色:</span>
-          <button class="theme-btn active" data-theme="pastel">🌸 夢幻蜜桃紫</button>
-          <button class="theme-btn" data-theme="dark">🌙 極致星空黑</button>
-          <button class="theme-btn" data-theme="mint">🍵 清新薄荷綠</button>
-          <button class="theme-btn" data-theme="sunset">🌅 落日餘暉金</button>
-          <button class="theme-btn" data-theme="ocean">🌊 深海琉璃藍</button>
+          <button class="theme-btn active" data-theme="pastel">🌸 蜜桃紫</button>
+          <button class="theme-btn" data-theme="dark">🌙 星空黑</button>
+          <button class="theme-btn" data-theme="mint">🍵 薄荷綠</button>
+          <button class="theme-btn" data-theme="sunset">🌅 餘暉金</button>
+          <button class="theme-btn" data-theme="ocean">🌊 琉璃藍</button>
           <label class="color-picker-wrap" title="點擊自選背景顏色">
-            <span>🎨 自選顏色</span>
+            <span>🎨 自選色</span>
             <input type="color" id="customColorPicker" value="#FFE8E8" />
           </label>
         </div>
       </div>
 
-      <!-- 第二列：演奏設定與完整示範曲庫 (無卡農，全部完整) -->
+      <!-- 第二列：演奏設置與完整曲庫 -->
       <div class="toolbar-row">
         <div class="btn-group">
           <span class="group-label">演奏設置:</span>
-          <button id="feedbackBtn" class="active">視覺回饋：開啟</button>
-          <button id="labelsBtn">唱名標籤：顯示</button>
-          <button id="sustainBtn">延音效果：關閉</button>
+          <button id="feedbackBtn" class="active">視覺回饋：開</button>
+          <button id="labelsBtn">唱名：顯示</button>
+          <button id="sustainBtn">延音：關</button>
         </div>
 
         <div class="btn-group">
@@ -446,7 +505,7 @@
         </div>
       </div>
 
-      <!-- 第三列：實體錄音與 WAV / MP3 / MP4 影音匯出 -->
+      <!-- 第三列：實體錄音與多媒體匯出 -->
       <div class="toolbar-row">
         <div class="btn-group">
           <span class="group-label">實體錄音:</span>
@@ -455,24 +514,24 @@
         </div>
 
         <div class="btn-group">
-          <span class="group-label">無損音檔 / 影音匯出:</span>
-          <button id="exportWavBtn" disabled>⬇ 匯出 WAV (通用無損音訊)</button>
-          <button id="exportMp3Btn" disabled>⬇ 匯出 MP3/音訊檔</button>
-          <button id="exportMp4Btn" disabled>🎬 匯出 MP4 影音檔</button>
+          <span class="group-label">通用匯出:</span>
+          <button id="exportWavBtn" disabled>⬇ 匯出 WAV</button>
+          <button id="exportMp3Btn" disabled>⬇ 匯出 MP3</button>
+          <button id="exportMp4Btn" disabled>🎬 匯出 MP4 影片</button>
         </div>
       </div>
     </div>
 
     <!-- 鋼琴按鍵區域 -->
-    <div class="piano-box">
+    <div class="piano-box" id="pianoBox">
       <div class="piano-keys enable-feedback" id="pianoKeys"></div>
     </div>
 
     <footer>
-      <div>💡 支援滑鼠點擊、按住滑動滑奏 (Glissando)、多點觸控與電腦鍵盤彈奏</div>
+      <div>💡 支援手機/平板觸控滑動、筆電觸控板、滑鼠點擊與電腦鍵盤彈奏</div>
       <div>
-        低八度：<span class="kbd-tag">A S D F G H J</span>（白） / <span class="kbd-tag">W E T Y U</span>（黑）
-        | 高八度：<span class="kbd-tag">K L ; ' Z X C V</span>（白） / <span class="kbd-tag">O P [ ] \</span>（黑）
+        低八度：<span class="kbd-tag">A S D F G H J</span> / <span class="kbd-tag">W E T Y U</span>
+        | 高八度：<span class="kbd-tag">K L ; ' Z X C V</span> / <span class="kbd-tag">O P [ ] \</span>
       </div>
     </footer>
   </div>
@@ -511,7 +570,7 @@
     ];
 
     /* ========================================================
-       2. Web Audio API 音效引擎與數位串流節點
+       2. Web Audio API 音效合成引擎
        ======================================================== */
     let audioCtx = null;
     let streamDest = null;
@@ -689,7 +748,7 @@
     buildPiano();
 
     /* ========================================================
-       4. 滑鼠、觸控與鍵盤事件
+       4. 跨裝置事件處理 (手機/平板多點觸控 + 電腦滑鼠鍵盤)
        ======================================================== */
     let isMouseDown = false;
 
@@ -719,36 +778,61 @@
       });
     });
 
-    let currentTouchNote = null;
-    pianoKeysEl.addEventListener('touchstart', handleTouch, { passive: false });
-    pianoKeysEl.addEventListener('touchmove', handleTouch, { passive: false });
-    pianoKeysEl.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      if (currentTouchNote) {
-        triggerNoteEnd(currentTouchNote);
-        currentTouchNote = null;
-      }
-    });
+    // 手機與平板多點觸控滑動支援 (Multi-Touch Glissando)
+    const activeTouches = new Map(); // touchId -> noteObj
 
-    function handleTouch(e) {
+    pianoKeysEl.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      const touch = e.touches[0];
-      const target = document.elementFromPoint(touch.clientX, touch.clientY);
-      const keyEl = target ? target.closest('.key') : null;
-
-      if (keyEl) {
-        const noteObj = noteMapByNote.get(keyEl.dataset.note);
-        if (noteObj && noteObj !== currentTouchNote) {
-          if (currentTouchNote) triggerNoteEnd(currentTouchNote);
-          currentTouchNote = noteObj;
-          triggerNoteStart(noteObj);
+      getAudioContext();
+      Array.from(e.changedTouches).forEach(touch => {
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+        const keyEl = target ? target.closest('.key') : null;
+        if (keyEl) {
+          const noteObj = noteMapByNote.get(keyEl.dataset.note);
+          if (noteObj) {
+            activeTouches.set(touch.identifier, noteObj);
+            triggerNoteStart(noteObj);
+          }
         }
-      } else if (currentTouchNote) {
-        triggerNoteEnd(currentTouchNote);
-        currentTouchNote = null;
-      }
+      });
+    }, { passive: false });
+
+    pianoKeysEl.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      Array.from(e.changedTouches).forEach(touch => {
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+        const keyEl = target ? target.closest('.key') : null;
+        const prevNote = activeTouches.get(touch.identifier);
+
+        if (keyEl) {
+          const currentNote = noteMapByNote.get(keyEl.dataset.note);
+          if (currentNote && currentNote !== prevNote) {
+            if (prevNote) triggerNoteEnd(prevNote);
+            activeTouches.set(touch.identifier, currentNote);
+            triggerNoteStart(currentNote);
+          }
+        } else if (prevNote) {
+          triggerNoteEnd(prevNote);
+          activeTouches.delete(touch.identifier);
+        }
+      });
+    }, { passive: false });
+
+    function handleTouchEnd(e) {
+      e.preventDefault();
+      Array.from(e.changedTouches).forEach(touch => {
+        const prevNote = activeTouches.get(touch.identifier);
+        if (prevNote) {
+          triggerNoteEnd(prevNote);
+          activeTouches.delete(touch.identifier);
+        }
+      });
     }
 
+    pianoKeysEl.addEventListener('touchend', handleTouchEnd, { passive: false });
+    pianoKeysEl.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+    // 電腦鍵盤按鍵映射
     const pressedKeys = new Set();
     window.addEventListener('keydown', (e) => {
       if (e.repeat) return;
@@ -773,7 +857,7 @@
     const THEMES = {
       pastel: {
         bg: 'linear-gradient(135deg, #FFE8E8 0%, #F5E8FF 50%, #EDE8F5 100%)',
-        card: 'rgba(255, 255, 255, 0.78)',
+        card: 'rgba(255, 255, 255, 0.82)',
         border: 'rgba(255, 255, 255, 0.9)',
         textMain: '#4A4453',
         textSub: '#7A7285',
@@ -892,7 +976,7 @@
       visualFeedback = !visualFeedback;
       pianoKeysEl.classList.toggle('enable-feedback', visualFeedback);
       feedbackBtn.classList.toggle('active', visualFeedback);
-      feedbackBtn.textContent = `視覺回饋：${visualFeedback ? '開啟' : '關閉'}`;
+      feedbackBtn.textContent = `視覺回饋：${visualFeedback ? '開' : '關'}`;
     });
 
     const labelsBtn = document.getElementById('labelsBtn');
@@ -900,14 +984,14 @@
     labelsBtn.addEventListener('click', () => {
       labelsVisible = !labelsVisible;
       pianoKeysEl.classList.toggle('hide-labels', !labelsVisible);
-      labelsBtn.textContent = `唱名標籤：${labelsVisible ? '顯示' : '隱藏'}`;
+      labelsBtn.textContent = `唱名：${labelsVisible ? '顯示' : '隱藏'}`;
     });
 
     const sustainBtn = document.getElementById('sustainBtn');
     sustainBtn.addEventListener('click', () => {
       sustainEnabled = !sustainEnabled;
       sustainBtn.classList.toggle('active', sustainEnabled);
-      sustainBtn.textContent = `延音效果：${sustainEnabled ? '開啟' : '關閉'}`;
+      sustainBtn.textContent = `延音：${sustainEnabled ? '開' : '關'}`;
     });
 
     const fullscreenBtn = document.getElementById('fullscreenBtn');
@@ -924,46 +1008,37 @@
     });
 
     /* ========================================================
-       7. 完整曲庫 (刪除卡農，其餘曲目均完整化)
+       7. 完整曲庫 (無卡農，全部完整化)
        ======================================================== */
     const SONGS = {
       // 1. 小星星 (完整三段體 A-B-A 旋律，全曲 42 音)
       star: [
-        // A段 主題
         ['C4', 400], ['C4', 400], ['G4', 400], ['G4', 400], ['A4', 400], ['A4', 400], ['G4', 800],
         ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 400], ['D4', 400], ['C4', 800],
-        // B段 中間發展
         ['G4', 400], ['G4', 400], ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 800],
         ['G4', 400], ['G4', 400], ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 800],
-        // A'段 主題再現
         ['C4', 400], ['C4', 400], ['G4', 400], ['G4', 400], ['A4', 400], ['A4', 400], ['G4', 800],
         ['F4', 400], ['F4', 400], ['E4', 400], ['E4', 400], ['D4', 400], ['D4', 400], ['C4', 800]
       ],
 
       // 2. 兩隻老虎 (四樂句輪唱完整版，全曲 32 音)
       twoTigers: [
-        // 兩隻老虎，兩隻老虎
         ['C4', 360], ['D4', 360], ['E4', 360], ['C4', 360],
         ['C4', 360], ['D4', 360], ['E4', 360], ['C4', 360],
-        // 跑得快，跑得快
         ['E4', 360], ['F4', 360], ['G4', 720],
         ['E4', 360], ['F4', 360], ['G4', 720],
-        // 一隻沒有眼睛，一隻沒有尾巴
         ['G4', 270], ['A4', 270], ['G4', 270], ['F4', 270], ['E4', 360], ['C4', 360],
         ['G4', 270], ['A4', 270], ['G4', 270], ['F4', 270], ['E4', 360], ['C4', 360],
-        // 真奇怪，真奇怪
         ['D4', 360], ['G4', 360], ['C4', 720],
         ['D4', 360], ['G4', 360], ['C4', 720]
       ],
 
       // 3. 小蜜蜂 (經典德國民謠完整版，全曲 23 音)
       littleBee: [
-        // 嗡嗡嗡，嗡嗡嗡，大家一起來做工
         ['G4', 380], ['E4', 380], ['E4', 760],
         ['F4', 380], ['D4', 380], ['D4', 760],
         ['C4', 380], ['D4', 380], ['E4', 380], ['F4', 380],
         ['G4', 380], ['G4', 380], ['G4', 760],
-        // 來匆匆，去匆匆，做工趣味濃
         ['G4', 380], ['E4', 380], ['E4', 760],
         ['F4', 380], ['D4', 380], ['D4', 760],
         ['C4', 380], ['E4', 380], ['G4', 380], ['G4', 380],
@@ -972,23 +1047,19 @@
 
       // 4. 給愛麗絲 (貝多芬完整經典主題部與過門再現)
       elise: [
-        // 主題首段
         ['E5', 240], ['D#5', 240], ['E5', 240], ['D#5', 240], ['E5', 240], ['B4', 240], ['D5', 240], ['C5', 240],
         ['A4', 480], ['REST', 120],
         ['C4', 240], ['E4', 240], ['A4', 240], ['B4', 480], ['REST', 120],
         ['E4', 240], ['G#4', 240], ['B4', 240], ['C5', 480], ['REST', 120],
         ['E4', 240],
-        // 主題後續段落
         ['E5', 240], ['D#5', 240], ['E5', 240], ['D#5', 240], ['E5', 240], ['B4', 240], ['D5', 240], ['C5', 240],
         ['A4', 480], ['REST', 120],
         ['C4', 240], ['E4', 240], ['A4', 240], ['B4', 480], ['REST', 120],
         ['E4', 240], ['C5', 240], ['B4', 240], ['A4', 680], ['REST', 150],
-        // 中段過門過渡
         ['B4', 240], ['C5', 240], ['D5', 240], ['E5', 480],
         ['G4', 240], ['F5', 240], ['E5', 240], ['D5', 480],
         ['F4', 240], ['E5', 240], ['D5', 240], ['C5', 480],
         ['E4', 240], ['D5', 240], ['C5', 240], ['B4', 600],
-        // 主題再現部
         ['E4', 240],
         ['E5', 240], ['D#5', 240], ['E5', 240], ['D#5', 240], ['E5', 240], ['B4', 240], ['D5', 240], ['C5', 240],
         ['A4', 480], ['REST', 120],
@@ -998,17 +1069,13 @@
 
       // 5. 歡樂頌 (第九號交響曲第四樂章完整主題，全曲 62 音)
       odeToJoy: [
-        // 第一句
         ['E4', 360], ['E4', 360], ['F4', 360], ['G4', 360], ['G4', 360], ['F4', 360], ['E4', 360], ['D4', 360],
         ['C4', 360], ['C4', 360], ['D4', 360], ['E4', 360], ['E4', 500], ['D4', 200], ['D4', 720],
-        // 第二句
         ['E4', 360], ['E4', 360], ['F4', 360], ['G4', 360], ['G4', 360], ['F4', 360], ['E4', 360], ['D4', 360],
         ['C4', 360], ['C4', 360], ['D4', 360], ['E4', 360], ['D4', 500], ['C4', 200], ['C4', 720],
-        // 第三句 (中間發展模進句)
         ['D4', 360], ['D4', 360], ['E4', 360], ['C4', 360],
         ['D4', 360], ['E4', 180], ['F4', 180], ['E4', 360], ['C4', 360],
         ['D4', 360], ['E4', 180], ['F4', 180], ['E4', 360], ['D4', 360], ['C4', 360], ['D4', 360], ['G4', 720],
-        // 第四句 (主題再現結尾)
         ['E4', 360], ['E4', 360], ['F4', 360], ['G4', 360], ['G4', 360], ['F4', 360], ['E4', 360], ['D4', 360],
         ['C4', 360], ['C4', 360], ['D4', 360], ['E4', 360], ['D4', 500], ['C4', 200], ['C4', 800]
       ]
